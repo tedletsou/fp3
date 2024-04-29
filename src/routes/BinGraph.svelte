@@ -9,11 +9,15 @@
     export let xScale = d3.scaleBand();
     export let metric = "Family Type";
     export let data = [];
-    export let binned_info = "";
+    export let text = [];
     export let bin_type = [];
     export let yScale = d3.scaleLinear();
 
-    let fillColor = d3.scaleOrdinal(d3.schemeCategory10);
+    // Define your custom colors
+    let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E']; // Example colors: red, green, blue, yellow
+
+    // Create the ordinal scale with your custom colors
+    let fillColor = d3.scaleOrdinal(customColors);
     let width = 850, height = 275; // changed the height of the graph from 600 to 450
     let xAxis, yAxis;
     let yAxisGridlines;
@@ -53,31 +57,26 @@
     $: selectedEvictions = brushedSelection ? data.filter(isDataSelected) : [];    
     $: hasSelection = brushedSelection && selectedEvictions.length > 0;
     $: selectedLines = (hasSelection ? selectedEviction: data).flatMap(d => d.mhi);
-    
-    // function fill_color(d)
-    // {
-
-    // }
 
     function compute_cx(d)
     {
         if(metric.includes("Family"))
         {
-            return xScale(d.family_bins) + xScale.bandwidth() / 2 + (Math.random() * 2 - 1)*20;
+            return xScale(d.family_bins) + xScale.bandwidth() / 3.5 + Math.random()*80;
         }
 
         if(metric.includes("Elder"))
         {
-            return xScale(d.elder_bins) + xScale.bandwidth() / 2 + (Math.random() * 2 - 1)*20;
+            return xScale(d.elder_bins) + xScale.bandwidth() / 3.5 + Math.random()*80;
         }
 
         if(metric.includes("Race"))
         {
-            return xScale(d.majority_race) + xScale.bandwidth() / 2 + (Math.random() * 2 - 1)*20;
+            return xScale(d.majority_race) + xScale.bandwidth() / 3.5 + Math.random()*80;
         }
         if(metric.includes("Corporate"))
         {
-            return xScale(d.corp_bins) + xScale.bandwidth() /2 + (Math.random() * 2 - 1)*20;
+            return xScale(d.corp_bins) + xScale.bandwidth() / 3.5 + Math.random()*80;
         }
     }
 
@@ -272,7 +271,6 @@ p{
             {/if}   
         {/each}
         
-        <!-- MIGHT NEED TO PUT IN THE SPECIFIC BIN TYPE AND USE IF STATEMENTS -->
         {#each data as d, index}           
             <circle 
                 class:selected={isDataSelected(d, metric)}
@@ -296,7 +294,7 @@ p{
     </svg>
 
     <dl class="metric_info">
-        {#each binned_info as info}
+        {#each text as info}
             {#if metric.includes("Black")}
                 <p>{info}</p>
             {/if}

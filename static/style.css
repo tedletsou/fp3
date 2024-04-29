@@ -1,6 +1,12 @@
+ 
+* { 
+
+    background-color: #C8D9E8;
+}
+
 h2.meta{
     font-size: 50px;
-    font-family: 'Segoe UI';
+    font-family: 'Helvetica Neue';
 }
 
 .meta_legend{
@@ -12,7 +18,7 @@ h2.meta{
         font-size: 15px;
         text-transform: uppercase;
         color: rgb(99, 99, 99);
-        font-family: 'Segoe UI';
+        font-family: 'Helvetica Neue';
     }
 
     dt{
@@ -23,9 +29,9 @@ h2.meta{
 .selection_column{
     grid-row: 2 / -1;
     grid-column: 1;
-    border: 1px solid black;
-    border-radius: 5px;
-    box-shadow: 5px 5px 5px grey;
+    border: 2px solid black;
+    border-radius: 10px;
+    /* box-shadow: 5px 5px 5px grey; */
     margin: 5px;
 }
 
@@ -34,18 +40,18 @@ h2.meta{
     margin-right: 5px;
     display: grid;
     text-align: center;
-    padding-right: 5px;
-    padding-top: 5px;
+    /* padding-right: 5px;
+    padding-top: 5px; */
     /* font-size: 20px; */
     /* border: 1px solid black; */
     /* border-radius: 5px; */
-    margin-right: 10px;
+    margin-right: 5px;
     padding: 10px;
     opacity: 80%;
 }
 
 .meta{
-    font-size: 30px;
+    font-size: 40px;
 }
 
 .race_selection{
@@ -90,6 +96,7 @@ h2.meta{
         row-gap: 0px;
         /* background-color: transparent; */
         border-radius: 5px;
+        font-family: 'Helvetica Neue';
     }
 
 }
@@ -97,8 +104,11 @@ h2.meta{
 .family_selection{
     display: grid;
     grid-template-rows: 5fr 5fr 5fr;
+    
     input{
+        width: auto;
         border-radius: 5px;
+        font-family: 'Helvetica Neue';
     }
    
 }
@@ -108,6 +118,7 @@ h2.meta{
     grid-template-columns: 5fr 5fr;
     input{
         border-radius: 5px;
+        font-family: 'Helvetica Neue';
     }
 }
 
@@ -116,11 +127,12 @@ h2.meta{
     grid-template-rows: 5fr 5fr 5fr;
     input{
         border-radius: 5px;
+        font-family: 'Helvetica Neue';
     }
 }
 
 input:hover{
-    background-color:bisque;
+    /* background-color:bisque; */
     transition: 200ms;
     font-style: bold;
     border-radius: 5px;
@@ -150,19 +162,21 @@ svg{
 }
 
 svg:hover{
-    box-shadow: 5px 5px 5px grey;
+    /* box-shadow: 5px 5px 5px grey; */
 }
 
 dl.info
 {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
     background-color: oklch(100% 0% 0 / 80%);
     box-shadow: 5px 5px 5px lightslategrey;
     border-radius: 5%;
     backdrop-filter: blur(10px);
-    padding:10px;
-    /* transition-duration: 50ms; */
+    margin:0px;
+    padding:5px;
+    font-family: 'Helvetica Neue';
+    transition-duration: 50ms;
     transition-property: opacity, visibility;
 
     &[hidden]:not(:hover, :focus-within){
@@ -187,7 +201,7 @@ dl.info
     }
 
     circle{
-        transition: 200ms;
+        transition: 100ms;
         transform-origin: center;
         transform-box: fill-box;
         &:hover
@@ -206,7 +220,7 @@ dl.info
         font-size: 15px;
         text-transform: uppercase;
         color: rgb(99, 99, 99);
-        font-family: 'Segoe UI';
+        font-family: 'Helvetica Neue';
     }
 
     dt{
@@ -216,20 +230,27 @@ dl.info
 
 div.full_page{
     display: grid;
-    grid-template-columns: 25fr 190fr 10fr 100fr;
+    grid-template-columns: 150fr 200fr 10fr 100fr;
     grid-template-rows: 10fr auto auto auto;
-    background-image: linear-gradient(white, rgb(0, 217, 255));
+    /* background-image: linear-gradient(white, rgb(0, 217, 255)); */
+    margin-top: 30px;
+    margin-bottom: 100px;
+    margin-right: 350px;
+    margin-left: 350px;
+    font-family: 'Helvetica Neue';
 }
 
 .narrative1{
     grid-column: 1 / -1;
     grid-row: 1;
-    border: 1px solid black;
-    box-shadow: 5px 5px 5px grey;
+    border: 0px solid black;
+    /* box-shadow: 5px 5px 5px grey; */
     opacity: 6  0%;
-    padding: 10px;
+    padding: 0px;
     margin:5px;
-    border-radius: 5px;
+    border-radius: 10px;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .simulate_winter_ban{
@@ -256,16 +277,16 @@ div.full_page{
     input:hover{
         transition-duration: 1000ms;
         padding:15px;
-        background-color: aquamarine;
+        /* background-color: aquamarine; */
     }
 
     input:active{
-        background-color: aqua;
+        /* background-color: aqua; */
         color:black;
     }
 
     input:focus{
-        background-color: aqua;
+        /* background-color: aqua; */
         color:black;
     }
 }
@@ -309,7 +330,7 @@ div.full_page{
     .slider_label{
         font-style: italic;
         font-size: 25px;
-        font-family: 'Times New Roman';
+        font-family: 'Helvetica Neue';
     }
 }
 

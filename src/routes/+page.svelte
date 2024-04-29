@@ -3,10 +3,16 @@
     import { onMount } from "svelte";
     import BinGraph from "./BinGraph.svelte";
     import DotAnimation from "./DotAnimation.svelte";
+    import {
+        computePosition,
+        autoPlacement,
+        offset
+    } from '@floating-ui/dom';
 
+    let dataRAW  = [];
     let data = [];
-    let dataRAW = [];
     let temp_data = [];
+    let temp_dataRAW = [];
     let width = 800, height = 275; // changed the height of the graph from 600 to 450
     let yScale = d3.scaleLinear();
     let xScaleHousehold = d3.scaleBand();
@@ -18,83 +24,26 @@
     let selectedEvictions;
     let hasSelection;
     let selectedLines;
-    
-    // bins for the different demographics
     let family_bins = ["family", "non-family", "mixed"];
     let race_bins = ["Black", "White", "Latino", "Other"];
     let elder_bins = ["some elders", "no elders"];
     let corp_bins = ["low", "medium", "high"];
-
+    let text_description = ["Majority, more than 50%, of the tenants in the house are a particular race.", 
+    "The tenants in the house are either all family members, not related at all, or a mix of family members and non family members.", 
+    "The housing property either contains some elderly people or no elderly people.", 
+    "The housing properties in the area have a majority of low, medium, or high corporate ownership."];
     let box_plot_stats_household_array = [];
     let box_plot_stats_race_array = [];
     let box_plot_stats_elder_array = [];
     let box_plot_stats_corp_array = [];
-    let metric_to_graph = "Race";
-    
-    ////////////////// JS for the income slider //////////////////
+    let metric_to_graph = "Family Type";
+    let checkbox_pushed = false;
+    let hoveredIndex = -1;
+    $: hoveredEviction = text_description[hoveredIndex]?? {};
+    let tooltipPosition = {x:0, y:0};
+    let evictionTooltip;
+    const format = d3.format(".1~%");
 
-    let minVal = 50000;
-    let maxVal = 200000;
-    const minGap = 30000;
-    const sliderMinValue = 50000;
-    const sliderMaxValue = 200000;
-    const stepValue = 1000;
-
-    // Reactive styling for slider track
-    $: minPercent = ((minVal - sliderMinValue) / (sliderMaxValue - sliderMinValue)) * 100;
-    $: maxPercent = ((maxVal - sliderMinValue) / (sliderMaxValue - sliderMinValue)) * 100;
-
-    // Enforce the minimum gap dynamically, broken
-    $: {
-        if (maxVal - minVal < minGap) {
-            // If decreasing maxVal or increasing minVal, adjust the other to maintain the gap
-            if (maxVal - minVal < minGap) {
-                maxVal = minVal + minGap;
-            }
-
-            if (minVal < sliderMinValue) {
-                minVal = sliderMinValue;
-                maxVal = minVal + minGap;
-            }
-            if (maxVal > sliderMaxValue) {
-                maxVal = sliderMaxValue;
-                minVal = maxVal - minGap;
-            }
-        }
-    }
-
-    // How to handle typed inputs
-    function handleMinInput(event) {
-        const inputVal = Math.max(Number(parseMoney(event.target.value)), sliderMinValue);
-        minVal = Math.min(inputVal, maxVal - minGap);
-    }
-
-    // How to handle typed inputs
-    function handleMaxInput(event) {
-        const inputVal = Math.min(Number(parseMoney(event.target.value)), sliderMaxValue);
-        maxVal = Math.max(inputVal, minVal + minGap);
-    }
-
-    // Checks with user has hit enter to change slider
-    function checkEnterKey(event, handler) {
-        if (event.key === 'Enter') {
-        handler(event);
-        event.target.blur(); // Optionally blur the input after processing to mimic the blur behavior
-        }
-    }
-
-    // Function to format numbers as money
-    function formatIncome(value) {
-        return value.toLocaleString('en-US');
-    }
-
-    // Function to parse formatted money back to number
-    function parseMoney(value) {
-        return parseInt(value.replace(/[\$,]/g, ''), 10);
-    }
-
-    //////////////////////////////////////////////////////////////
-        
     // defining axes
     let margin = {top: 10, right: 10, bottom: 30, left:40};
     let usableArea = {
@@ -111,19 +60,29 @@
         d3.select(yAxisGridlines).call(d3.axisLeft(yScale).tickSize(-usableArea.width));
     }
 
-    // Startup function
     onMount(async() => {
-        dataRAW = await d3.csv("binned_data.csv", row=> ({
+        dataRAW  = await d3.csv("binned_data.csv", row=> ({
+            ...row,
+            mhi: Number(row.mhi),
+            eviction_rate: Number(row.eviction_rate)
+        }));
+
+        temp_dataRAW = await d3.csv("evictions_per_month_with_bins.csv", row=> ({
             ...row,
             mhi: Number(row.mhi),
             eviction_rate: Number(row.eviction_rate),
-            family_bins: String(row.family_bins)
+            year: Number(row.year),
+            month: Number(row.month),
+            filings: Number(row.filings)
         }));
+
+        // temp_data
 
     });
 
-    // $: data = data.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > 0);
-    $: data = dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal).filter((d) => d.mhi < maxVal);
+    // $: data  = radio_button_pushed ? dataRAW.filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1) : dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
+    $: data = dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
+    $: temp_data = isChecked ? temp_dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.majority_race !== '').filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.mhi > minVal).filter((d) => d.mhi < maxVal) : temp_dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.majority_race !== '').filter((d) => d.mhi > minVal).filter((d) => d.mhi < maxVal);
     $: selectedEvictions = brushedSelection ? data.filter(isDataSelected) : [];    
     $: hasSelection = brushedSelection && selectedEvictions.length > 0;
     $: selectedLines = (hasSelection ? selectedEviction: data).flatMap(d => d.mhi);
@@ -146,7 +105,28 @@
 
     // Computing box plots for corporate ownership binned data
     $: box_plot_stats_corp_array = computeStats(corp_bins, "corporate", data);
-    
+
+    async function textInteraction (index, evt){
+        let hoveredDot = evt.target;
+        
+        if (evt.type === "mouseenter" || evt.type === "focus")
+        {
+            hoveredIndex = index;
+            tooltipPosition = await computePosition(hoveredDot, evictionTooltip, {
+                strategy: "fixed",
+                middleware: [
+                    offset(1),
+                    autoPlacement()
+                ],
+            });
+        }
+
+        else if (evt.type === "mouseleave" || evt.type === "blur")
+        {
+            hoveredIndex = -1;
+        }
+    } 
+
     // compute boxplots for each category for a bin (family, race, elder, corporate ownership)
     function computeStats(bins, metric, data)
     {
@@ -208,24 +188,91 @@
         return summary_stats
     } 
 
+    let isChecked = false;
+
+    function toggleCheckbox() {
+        isChecked = !isChecked;
+        console.log(isChecked);
+    }
+
+    ////////////////// JS for the income slider //////////////////
+
+    let minVal = 70000;
+    let maxVal = 100000;
+    const minGap = 5000;
+    const sliderMinValue = 70000;
+    const sliderMaxValue = 100000;
+    const stepValue = 100;
+
+    // Reactive styling for slider track
+    $: minPercent = ((minVal - sliderMinValue) / (sliderMaxValue - sliderMinValue)) * 100;
+    $: maxPercent = ((maxVal - sliderMinValue) / (sliderMaxValue - sliderMinValue)) * 100;
+
+    // Enforce the minimum gap dynamically, broken
+    $: {
+        if (maxVal - minVal < minGap) {
+            // If decreasing maxVal or increasing minVal, adjust the other to maintain the gap
+            if (maxVal - minVal < minGap) {
+                maxVal = minVal + minGap;
+            }
+
+            if (minVal < sliderMinValue) {
+                minVal = sliderMinValue;
+                maxVal = minVal + minGap;
+            }
+            if (maxVal > sliderMaxValue) {
+                maxVal = sliderMaxValue;
+                minVal = maxVal - minGap;
+            }
+        }
+    }
+
+    // How to handle typed inputs
+    function handleMinInput(event) {
+        const inputVal = Math.max(Number(parseMoney(event.target.value)), sliderMinValue);
+        minVal = Math.min(inputVal, maxVal - minGap);
+    }
+
+    // How to handle typed inputs
+    function handleMaxInput(event) {
+        const inputVal = Math.min(Number(parseMoney(event.target.value)), sliderMaxValue);
+        maxVal = Math.max(inputVal, minVal + minGap);
+    }
+
+    // Checks with user has hit enter to change slider
+    function checkEnterKey(event, handler) {
+        if (event.key === 'Enter') {
+        handler(event);
+        event.target.blur(); // Optionally blur the input after processing to mimic the blur behavior
+        }
+    }
+
+    // Function to format numbers as money
+    function formatIncome(value) {
+        return value.toLocaleString('en-US');
+    }
+
+    // Function to parse formatted money back to number
+    function parseMoney(value) {
+        return parseInt(value.replace(/[\$,]/g, ''), 10);
+    }
+
+    //////////////////////////////////////////////////////////////
+
 </script>
 
 <style>
+     /* CSS for Income Selector */
 
-    /* CSS for Income Selector */
-
-    .double-slider-box {
-        
+     .double-slider-box {
         margin: 0;
         box-sizing: border-box;
-
         display: grid;
         max-width: 30em;
-        background-color: rgb(207, 207, 207);
+        /* background-color: rgb(207, 207, 207); */
         padding: 20px 40px;
         border-radius: 1em;
         font-family: 'Helvetica Neue';
-    
     }
 
     h3.range-title{
@@ -367,16 +414,21 @@
         border: 1px solid black;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-
     }
 
     /* CSS for Income Selector */
+
+    .meta {
+        font-family: 'Helvetica Neue';
+        text-align: center;
+    }
+
 
 
 </style>
 
 <h3 class="meta">
-    <strong style="color: blue;">Interactive Voices:</strong>
+    <strong style="color: #46A09E;">Interactive Voices:</strong>
     Mapping the Movement for Eviction Reform and Advocacy
 </h3>
 
@@ -384,22 +436,33 @@
 
     <div class="narrative1">
         <section>
-            <h2>Massachusetts Needs Winter Eviction Bans</h2>
+            <h3 style="color: #744665">Winter evictions are especially dangerous </h3>
             <p>
-                Despite ranking as one of the coldest major cities in America [1], Boston lacks eviction protection during winter months.
-                To quote the article, “Mass. should ban evictions during winter months” written by Gary Klein and Sarah Rosenkrantz, 
-                “...cities like Chicago and Washington, DC ban evictions during cold weather. And both New York and Connecticut 
-                have bills pending in their legislatures that would permanently ban most evictions during the winter months.”  
-                So this begs the question, why does Boston have no such legislation? Boston’s lack of winter protection 
-                affects historically discriminated groups the most: families, the elderly, and people of color.  
-                The goal of our visualization is to show the effect a winter eviction moratorium would have Boston’s population.
+                Subfreezing temperatures can occur more than 90 days a year in Boston. 
+                Yet, despite ranking as one of the coldest major cities in America, Boston lacks eviction protection during winter months. 
+                Families can be evicted in the dead of winter, with nowhere to go. 
+                Evictions are always cruel and traumatizing, but winter evictions are especially dangerous–The National Coalition for Homelessness estimates that 700 people experiencing homelessness die from hypothermia each year. 
             </p>
+
+            <h3 style="color: #744665">Boston lacks cold-weather renter protections </h3>
+            <p>
+                France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. 
+                The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. 
+                While statewide or national legislation would be the best approach, Boston can work quickly to protect its population now. 
+                Boston’s local Boards of Health can declare states of emergency that prevent winter evictions. 
+
+            </p>
+
+            <h3 style = "color: #744665">Boston’s lack of winter protection greatly affects historically discriminated groups: families, the elderly, and people of color. 
+                A moratorium on winter evictions would benefit these groups the most. 
+            </h3>
         </section>
     </div>
-    <div class="selection_column">        
+
+    <div class="selection_column">
         <div class="double-slider-box">
-            <h3 class="range-title">Yearly Income</h3>
-            <p class="range-description">Use the slider tool to select a minimum and maximum income</p>
+            <h3 class="range-title">Looking at evictions from groups with matched incomes</h3>
+            <p class="range-description">Adjust slider to subset regions by average income</p>
             <div class="range-slider">
                 <span class="slider-track" style="left: {minPercent + 1}%; right: {100 - maxPercent}%"></span>
                 <input type="range" bind:value={minVal} class="min-val" min={sliderMinValue} max={sliderMaxValue} step={stepValue}>
@@ -426,63 +489,140 @@
                 </div>
             </div>
         </div>
+
+        <dl id="eviction-tooltip" class="info tooltip" 
+            hidden={hoveredIndex === -1}
+            bind:this={evictionTooltip}
+            style="top:{tooltipPosition.y}px; left:{tooltipPosition.x}px">
+            <dt>Metric Description</dt>
+            <dd> { hoveredEviction } </dd>
+        </dl>
         
         <div class="metric_selection">
-            <h4>Race</h4>
+            <h4 on:mouseenter= {evt=> textInteraction(0, evt)}
+                on:mouseleave={evt => textInteraction(0, evt)}>
+                Race
+            </h4>
             <dl class="race_selection">
-                <input type="button" value="White" on:click={ function() {metric_to_graph= "Race White"} }>
-                <input type="button" value="Black" on:click={ function() {metric_to_graph= "Race Black"} }>
-                <input type="button" value="Latino" on:click={ function() {metric_to_graph= "Race Latino"} }>
-                <input type="button" value="Other" on:click={ function() {metric_to_graph= "Race Other"} }>
+                <input type="button" value="White" 
+                on:click={ function() {metric_to_graph= "Race White"} }>
+                
+                <input type="button" value="Black" 
+                on:click={ function() {metric_to_graph= "Race Black"} }>
+
+                <input type="button" value="Latino" 
+                on:click={ function() {metric_to_graph= "Race Latino"} }>
+
+                <input type="button" value="Other" 
+                on:click={ function() {metric_to_graph= "Race Other"} }>
             </dl>
             
-            <h4>Family Type</h4>
+            <h4
+                on:mouseenter= {evt=> textInteraction(1, evt)}
+                on:mouseleave={evt => textInteraction(1, evt)}>
+                Family Type
+            </h4>
             <dl class="family_selection">
-                <input type="button" value="Mixed" on:click={ function() {metric_to_graph= "Family Type Mixed"} }>
-                <input type="button" value="Non Family" on:click={ function() {metric_to_graph= "Family Type Non-Fam"} }>
-                <input class="bottom_row" type="button" value="Family" on:click={ function() {metric_to_graph= "Family Type FamilyType"} }>
+                <input type="button" value="Mixed" 
+                on:click={ function() {metric_to_graph= "Family Type Mixed"} }>
+
+                <input type="button" value="Non Family" 
+                on:click={ function() {metric_to_graph= "Family Type Non-Fam"} }>
+
+                <input class="bottom_row" type="button" value="Family" 
+                on:click={ function() {metric_to_graph= "Family Type FamilyType"} }>
             </dl>
             
-            <h4>Elderly Population</h4>
+            <h4
+                on:mouseenter= {evt=> textInteraction(2, evt)}
+                on:mouseleave={evt => textInteraction(2, evt)}>
+                Elderly Population
+
+            </h4>
             <dl class="elderly_selection">
-                <input type="button" value="No Elderly" on:click={ function() {metric_to_graph= "No Elderly"} }>
-                <input type="button" value="Some Elderly" on:click={ function() {metric_to_graph= "Some Elderly"} }>
+                <input type="button" value="No Elderly" 
+                on:click={ function() {metric_to_graph= "No Elderly"} }>
+
+                <input type="button" value="Some Elderly" 
+                on:click={ function() {metric_to_graph= "Some Elderly"} }>
             </dl>
             
-            <h4>Corporate Ownership</h4>
+            <h4
+                on:mouseenter= {evt=> textInteraction(3, evt)}
+                on:mouseleave={evt => textInteraction(3, evt)}>
+                Corporate Ownership
+            </h4>
             <dl class="corporate_selection">
-                <input type="button" value="Low Corporate Ownership" on:click={ function() {metric_to_graph= "Corporate Ownership Low"} }>
-                <input type="button" value="Medium Corporate Ownership" on:click={ function() {metric_to_graph= "Corporate Ownership Medium"} }>
-                <input type="button" value="High Corporate Ownership" on:click={ function() {metric_to_graph= "Corporate Ownership High"} }>
+                <input type="button" value="Low Corporate Ownership" 
+                on:click={ function() {metric_to_graph= "Corporate Ownership Low"} }>
+
+                <input type="button" value="Medium Corporate Ownership" 
+                on:click={ function() {metric_to_graph= "Corporate Ownership Medium"} }>
+
+                <input type="button" value="High Corporate Ownership" 
+                on:click={ function() {metric_to_graph= "Corporate Ownership High"} }>
             </dl>
         </div>
     </div>
     
     <div class="full_graph">
-        {#if metric_to_graph.includes("Family")}
+        {#if metric_to_graph.includes("Mixed")}
             <BinGraph binned_data={box_plot_stats_household_array} yScale={yScale}
                       xScale={xScaleHousehold} metric={metric_to_graph} 
-                      bin_type={family_bins} data={data} binned_info={"Family Metric"}/>
+                      bin_type={family_bins} data={data} text={["Families (especially with children) increase the risk of eviction. "]}/>
+        {:else if metric_to_graph.includes("Non-Fam")}
+            <BinGraph binned_data={box_plot_stats_household_array} yScale={yScale}
+                xScale={xScaleHousehold} metric={metric_to_graph} 
+                bin_type={family_bins} data={data} text={["Eviction rates are lower in non-family households. "]}/>
+        {:else if metric_to_graph.includes("FamilyType")}
+            <BinGraph binned_data={box_plot_stats_household_array} yScale={yScale}
+                xScale={xScaleHousehold} metric={metric_to_graph} 
+                bin_type={family_bins} data={data} text={["Families (especially with children) increase the risk of eviction. "]}/>
         {/if}
-        {#if metric_to_graph.includes("Race")}
+        {#if metric_to_graph.includes("White")}
             <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
                       xScale={xScaleRace} metric={metric_to_graph}
-                      bin_type={race_bins} data={data} binned_info={"Race Metric"}/>
+                      bin_type={race_bins} data={data} text={["Eviction rates are lowest in regions with a majority white population.  "]}/>
+        {:else if metric_to_graph.includes("Black")}
+            <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
+                      xScale={xScaleRace} metric={metric_to_graph}
+                      bin_type={race_bins} data={data} text={["Eviction rates are highest in regions with a majority black population, more than twice as high as majority white regions. "]}/>
+        {:else if metric_to_graph.includes("Latino")}
+            <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
+                      xScale={xScaleRace} metric={metric_to_graph}
+                      bin_type={race_bins} data={data} text={["Eviction rates are higher in regions with a majority latino population."]}/>
+        {:else if metric_to_graph.includes("Other")}
+            <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
+                      xScale={xScaleRace} metric={metric_to_graph}
+                      bin_type={race_bins} data={data} text={["Eviction rates are higher in neighborhoods that are not majority white."]}/>
         {/if}
-        {#if metric_to_graph.includes("Elderly")}
+        {#if metric_to_graph.includes("No Elderly")}
             <BinGraph binned_data={box_plot_stats_elder_array} yScale={yScale}
                       xScale={xScaleElder} metric={metric_to_graph}
-                      bin_type={elder_bins} data={data} binned_info={"Elderly Metric"}/>
+                      bin_type={elder_bins} data={data} text={["Homogenous regions without any elderly population experience far lower eviction "]}/>
+        {:else if metric_to_graph.includes("Some Elderly")}
+            <BinGraph binned_data={box_plot_stats_elder_array} yScale={yScale}
+                      xScale={xScaleElder} metric={metric_to_graph}
+                      bin_type={elder_bins} data={data} text={["Regions with some elderly population are much more at risk of evictions."]}/>
         {/if}
-        {#if metric_to_graph.includes("Corporate")}
+        {#if metric_to_graph.includes("Corporate Ownership Low")}
             <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
                       xScale={xScaleCorp} metric={metric_to_graph}
-                      bin_type={corp_bins} data={data} binned_info={"Corporate Metric"}/>
+                      bin_type={corp_bins} data={data} text={["Low Corporate Ownership"]}/>
+        {:else if metric_to_graph.includes("Corporate Ownership Medium")}
+            <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
+                      xScale={xScaleCorp} metric={metric_to_graph}
+                      bin_type={corp_bins} data={data} text={["Medium Corporate Ownership"]}/>
+        {:else if metric_to_graph.includes("Corporate Ownership High")}
+            <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
+                      xScale={xScaleCorp} metric={metric_to_graph}
+                      bin_type={corp_bins} data={data} text={["High Corporate Ownership"]}/>
         {/if}        
     </div>
 
     <div class="simulate_winter_ban">
-        <input class="winter_button" type="button" value="Simulate Winter Ban">
+        <input type="checkbox" bind:checked={isChecked} on:click={toggleCheckbox}>
+        <label><h3>Simulate Winter Ban</h3></label>
         <section>
             <p>
                 Click on the <em>"Simulate Winter Ban"</em> button to see how the eviction rate changes 
@@ -492,51 +632,26 @@
         </section>
     </div>
 
-    <!-- <div class="eviction_animation">
+    <div class="eviction_animation">
         {#if metric_to_graph.includes("Family")}
-            <DotAnimation data={temp_data} text={"[insert text for Family Bin here]"}
+            <DotAnimation data={temp_data} text={"Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups.  A winter eviction moratorium stops people from being evicted into freezing temperatures outside, especially benefitting already disadvantaged groups. "}
             bins={family_bins} metric={metric_to_graph} />
         {/if}
 
         {#if metric_to_graph.includes("Race")}
-            <DotAnimation data={temp_data} text={"[insert text for Race Bin here]"}
+            <DotAnimation data={temp_data} text={"Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups.  A winter eviction moratorium stops people from being evicted into freezing temperatures outside, especially benefitting already disadvantaged groups. "}
             bins={race_bins} metric={metric_to_graph} />
         {/if}
 
         {#if metric_to_graph.includes("Elder")}
-            <DotAnimation data={temp_data} text={"[insert text for Elder Bin here]"}
+            <DotAnimation data={temp_data} text={"Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups.  A winter eviction moratorium stops people from being evicted into freezing temperatures outside, especially benefitting already disadvantaged groups. "}
             bins={elder_bins} metric={metric_to_graph} />
         {/if}
 
         {#if metric_to_graph.includes("Corporate")}
-            <DotAnimation data={temp_data} text={"[insert text for Corporate Bin here]"}
+            <DotAnimation data={temp_data} text={"Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups.  A winter eviction moratorium stops people from being evicted into freezing temperatures outside, especially benefitting already disadvantaged groups. "}
             bins={corp_bins} metric={metric_to_graph} />
         {/if}
-        
-    </div> -->
-
-    <!-- <div class="map_visualization">
-        
-        {#if metric_to_graph.includes("Family")}
-            <MapVisual data={geo_data} info={"[insert text for Family Bin here]"}/>
-        {/if}
-
-        {#if metric_to_graph.includes("Race")}
-            <MapVisual data={geo_data} info={"[insert text for Race Bin here]"}/>
-        {/if}
-
-        {#if metric_to_graph.includes("Elder")}
-            <MapVisual data={geo_data} info={"[insert text for Elder Bin here]"}/>
-        {/if}
-
-        {#if metric_to_graph.includes("Corporate")}
-            <MapVisual data={geo_data} info={"[insert text for Corporate Bin here]"}/>
-        {/if}
-        
-    </div> -->
+         
+    </div>
 </div>
-
-<!-- IDEAS: -->
-<!-- - CHANGE THE GRADIENT TO BE WARM VS COOL COLORS TO REPRESENT THE SIMULATION OF WINTER BAN -->
-<!-- BUG: -->
-<!-- WHEN HOVERING OVER BUTTONS FOR VARIOUS BINS, GLITCHES WHEN ANOTHER BUTTON IS HOVERED OVER -->
