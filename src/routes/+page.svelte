@@ -499,125 +499,63 @@
         </dl>
         
         <div class="metric_selection">
-            <h4 on:mouseenter= {evt=> textInteraction(0, evt)}
-                on:mouseleave={evt => textInteraction(0, evt)}>
-                Race
-            </h4>
+    
             <dl class="race_selection">
-                <input type="button" value="White" 
-                on:click={ function() {metric_to_graph= "Race White"} }>
-                
-                <input type="button" value="Black" 
-                on:click={ function() {metric_to_graph= "Race Black"} }>
+                <input type="button" value="Race" 
+                on:click={ function() {metric_to_graph= "Race"} }
+                on:mouseenter= {evt=> textInteraction(0, evt)}
+                on:mouseleave={evt => textInteraction(0, evt)}>
 
-                <input type="button" value="Latino" 
-                on:click={ function() {metric_to_graph= "Race Latino"} }>
-
-                <input type="button" value="Other" 
-                on:click={ function() {metric_to_graph= "Race Other"} }>
             </dl>
-            
-            <h4
+            <dl class="family_selection">
+                <input type="button" value="Family" 
+                on:click={ function() {metric_to_graph= "Family"} }
                 on:mouseenter= {evt=> textInteraction(1, evt)}
                 on:mouseleave={evt => textInteraction(1, evt)}>
-                Family Type
-            </h4>
-            <dl class="family_selection">
-                <input type="button" value="Mixed" 
-                on:click={ function() {metric_to_graph= "Family Type Mixed"} }>
-
-                <input type="button" value="Non Family" 
-                on:click={ function() {metric_to_graph= "Family Type Non-Fam"} }>
-
-                <input class="bottom_row" type="button" value="Family" 
-                on:click={ function() {metric_to_graph= "Family Type FamilyType"} }>
             </dl>
-            
-            <h4
+        
+            <dl class="elderly_selection">
+                <input type="button" value="Elder" 
+                on:click={ function() {metric_to_graph= "Elderly"} }
                 on:mouseenter= {evt=> textInteraction(2, evt)}
                 on:mouseleave={evt => textInteraction(2, evt)}>
-                Elderly Population
-
-            </h4>
-            <dl class="elderly_selection">
-                <input type="button" value="No Elderly" 
-                on:click={ function() {metric_to_graph= "No Elderly"} }>
-
-                <input type="button" value="Some Elderly" 
-                on:click={ function() {metric_to_graph= "Some Elderly"} }>
             </dl>
-            
-            <h4
+        
+            <dl class="corporate_selection">
+                <input type="button" value="Corporate" 
+                on:click={ function() {metric_to_graph= "Corporate"} }
                 on:mouseenter= {evt=> textInteraction(3, evt)}
                 on:mouseleave={evt => textInteraction(3, evt)}>
-                Corporate Ownership
-            </h4>
-            <dl class="corporate_selection">
-                <input type="button" value="Low Corporate Ownership" 
-                on:click={ function() {metric_to_graph= "Corporate Ownership Low"} }>
-
-                <input type="button" value="Medium Corporate Ownership" 
-                on:click={ function() {metric_to_graph= "Corporate Ownership Medium"} }>
-
-                <input type="button" value="High Corporate Ownership" 
-                on:click={ function() {metric_to_graph= "Corporate Ownership High"} }>
             </dl>
         </div>
     </div>
     
     <div class="full_graph">
-        {#if metric_to_graph.includes("Mixed")}
+        {#if metric_to_graph.includes("Family")}
             <BinGraph binned_data={box_plot_stats_household_array} yScale={yScale}
                       xScale={xScaleHousehold} metric={metric_to_graph} 
                       bin_type={family_bins} data={data} text={["Families (especially with children) increase the risk of eviction. "]}/>
-        {:else if metric_to_graph.includes("Non-Fam")}
-            <BinGraph binned_data={box_plot_stats_household_array} yScale={yScale}
-                xScale={xScaleHousehold} metric={metric_to_graph} 
-                bin_type={family_bins} data={data} text={["Eviction rates are lower in non-family households. "]}/>
-        {:else if metric_to_graph.includes("FamilyType")}
-            <BinGraph binned_data={box_plot_stats_household_array} yScale={yScale}
-                xScale={xScaleHousehold} metric={metric_to_graph} 
-                bin_type={family_bins} data={data} text={["Families (especially with children) increase the risk of eviction. "]}/>
-        {/if}
-        {#if metric_to_graph.includes("White")}
+        {/if}   
+        
+        {#if metric_to_graph.includes("Race")}
             <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
                       xScale={xScaleRace} metric={metric_to_graph}
                       bin_type={race_bins} data={data} text={["Eviction rates are lowest in regions with a majority white population.  "]}/>
-        {:else if metric_to_graph.includes("Black")}
-            <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
-                      xScale={xScaleRace} metric={metric_to_graph}
-                      bin_type={race_bins} data={data} text={["Eviction rates are highest in regions with a majority black population, more than twice as high as majority white regions. "]}/>
-        {:else if metric_to_graph.includes("Latino")}
-            <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
-                      xScale={xScaleRace} metric={metric_to_graph}
-                      bin_type={race_bins} data={data} text={["Eviction rates are higher in regions with a majority latino population."]}/>
-        {:else if metric_to_graph.includes("Other")}
-            <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
-                      xScale={xScaleRace} metric={metric_to_graph}
-                      bin_type={race_bins} data={data} text={["Eviction rates are higher in neighborhoods that are not majority white."]}/>
         {/if}
-        {#if metric_to_graph.includes("No Elderly")}
+
+        {#if metric_to_graph.includes("Elder")}
             <BinGraph binned_data={box_plot_stats_elder_array} yScale={yScale}
                       xScale={xScaleElder} metric={metric_to_graph}
                       bin_type={elder_bins} data={data} text={["Homogenous regions without any elderly population experience far lower eviction "]}/>
-        {:else if metric_to_graph.includes("Some Elderly")}
-            <BinGraph binned_data={box_plot_stats_elder_array} yScale={yScale}
-                      xScale={xScaleElder} metric={metric_to_graph}
-                      bin_type={elder_bins} data={data} text={["Regions with some elderly population are much more at risk of evictions."]}/>
         {/if}
-        {#if metric_to_graph.includes("Corporate Ownership Low")}
+        {#if metric_to_graph.includes("Corporate")}
             <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
                       xScale={xScaleCorp} metric={metric_to_graph}
                       bin_type={corp_bins} data={data} text={["Low Corporate Ownership"]}/>
-        {:else if metric_to_graph.includes("Corporate Ownership Medium")}
-            <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
-                      xScale={xScaleCorp} metric={metric_to_graph}
-                      bin_type={corp_bins} data={data} text={["Medium Corporate Ownership"]}/>
-        {:else if metric_to_graph.includes("Corporate Ownership High")}
-            <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
-                      xScale={xScaleCorp} metric={metric_to_graph}
-                      bin_type={corp_bins} data={data} text={["High Corporate Ownership"]}/>
-        {/if}        
+        {/if}
+
+        
+        
     </div>
 
     <div class="simulate_winter_ban">
@@ -655,3 +593,18 @@
          
     </div>
 </div>
+
+
+<!-- TEXT for each Bin and Category: -->
+    <!-- Mixed: ["Families (especially with children) increase the risk of eviction. "]
+    Non-Fam: ["Eviction rates are lower in non-family households. "]
+    FamilyType: ["Families (especially with children) increase the risk of eviction. "]
+    White: ["Eviction rates are lowest in regions with a majority white population.  "]
+    Black: ["Eviction rates are highest in regions with a majority black population, more than twice as high as majority white regions. "]
+    Latino: ["Eviction rates are higher in regions with a majority latino population."]
+    Other: ["Eviction rates are higher in neighborhoods that are not majority white."]
+    No Elderly: ["Homogenous regions without any elderly population experience far lower eviction "]
+    Some Elderly: ["Regions with some elderly population are much more at risk of evictions."]
+    Corporate Ownership Low: ["Low Corporate Ownership"]
+    Corporate Ownership Medium: ["Medium Corporate Ownership"]
+    Corporate Ownership High: ["High Corporate Ownership"] -->

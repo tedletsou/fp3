@@ -118,7 +118,7 @@
         let bottom_right = {x: brushedSelection[1][0], y: brushedSelection[1][1]};
         let data_y_coord = yScale(dot.eviction_rate);
 
-        if (metric.includes("Family Type"))
+        if (metric.includes("Family"))
         {
             // account for the x shift
             // gets coordinate of commit data point
@@ -295,7 +295,19 @@ p{
 
     <dl class="metric_info">
         {#each text as info}
-            {#if metric.includes("Black")}
+            {#if metric.includes("Race")}
+                <p>{info}</p>
+            {/if}
+            {#if metric.includes("Family")}
+                <p>{info}</p>
+            {/if}
+            {#if metric.includes("Elder")}
+                <p>{info}</p>
+            {/if}
+            {#if metric.includes("Corporate")}
+                <p>{info}</p>
+            {/if}
+            <!-- {#if metric.includes("Black")}
                 <p>{info}</p>
             {/if}
             {#if metric.includes("White")}
@@ -306,8 +318,8 @@ p{
             {/if}
             {#if metric.includes("Other")}
                 <p>{info}</p>
-            {/if}
-            {#if metric.includes("FamilyType")}
+            {/if} -->
+            <!-- {#if metric.includes("FamilyType")}
                 <p>{info}</p>
             {/if}
             {#if metric.includes("Non-Fam")}
@@ -315,14 +327,14 @@ p{
             {/if}
             {#if metric.includes("Mixed")}
                 <p>{info}</p>
-            {/if}
-            {#if metric.includes("No Elder")}
+            {/if} -->
+            <!-- {#if metric.includes("No Elder")}
                 <p>{info}</p>
             {/if}
             {#if metric.includes("Some Elder")}
                 <p>{info}</p>
-            {/if}
-            {#if metric.includes("Low")}
+            {/if} -->
+            <!-- {#if metric.includes("Low")}
                 <p>{info}</p>
             {/if}
             {#if metric.includes("Medium")}
@@ -330,7 +342,7 @@ p{
             {/if}
             {#if metric.includes("High")}
                 <p>{info}</p>
-            {/if}
+            {/if} -->
         {/each}
     </dl>
 </div>

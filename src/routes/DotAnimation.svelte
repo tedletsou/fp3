@@ -10,7 +10,7 @@
     export let bins = [];
     export let metric = "";
 
-    let temp_bins = ["Really warm", "Warm", "Cold", "Really Cold"];
+    let temp_bins = ["Summer", "Spring", "Fall", "Winter"];
     let margin = {top: 10, right: 10, bottom: 30, left:40};
     let height= 400;
     let width = 600;
@@ -91,27 +91,28 @@
     // which will be used to graph the y position of the data point
     function convertMonthToTemp(month)
     {
-        // temperature bins: ["Really warm", "Warm", "Cold", "Really Cold"]
+        // temperature bins: ["Summer", "Spring", "Fall", "Winter"]
+        // Fall Months
         if((9 <= month) && (month < 11))
         {
-            return "Cold";
+            return "Fall";
         }
-        // really cold temperatures
+        // Winter Months
         if (((1 <= month ) && (month < 4)) || (11 <= month))
         {
-            return "Really Cold";
+            return "Winter";
         }
 
-        // warm temperatures
+        // Spring Months
         if ((4 <= month) && (month < 6 ))
         {
-            return "Warm";
+            return "Spring";
         }
 
-        // really warm temperatures
+        // Summer Months
         if(6 <= month < 9)
         {
-            return "Really warm";
+            return "Summer";
         }
     }
 
@@ -130,8 +131,8 @@
 .moving_dots{
     opacity: 75%;
     /* animation: moveCircles 20s  ease-in-out; */
-    animation: moveCircles 20s  ease-in-out infinite; 
-    animation-delay: calc(var(--index) * 20ms);
+    animation: moveCircles 25s  ease-in-out; 
+    animation-delay: calc(var(--index) * 200ms);
 }
 .description{
     /* border: 2px solid black; */
@@ -243,6 +244,7 @@ svg{
                 width={width} height={height}> 
                 <g class="gridlines" transform="translate({usableArea.left}, 0)" bind:this={yAxisGridlines} />
                 <g transform="translate({usableArea.top})" bind:this={yAxis}/>
+                <!-- INSERT AN IMAGE ELEMENT TO  -->
                 {#each data as d, index}
                     <circle
                         class="moving_dots"
