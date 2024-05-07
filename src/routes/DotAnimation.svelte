@@ -178,13 +178,14 @@
     margin-bottom:20px;
     
     .visual{
-        width:800px;
+        width:700px;
         height:300px;
         /* background-color:blue; */
         opacity:80%;
         grid-column:1;
         margin-bottom:80px;
         padding-bottom: 30px;
+        /* margin-right: 20px; */
         /* padding:5px; */
     }
 
@@ -193,6 +194,8 @@
         font-family: 'Helvetica Neue';
         display:grid;
         grid-template-rows: auto auto auto auto;
+        margin-right: 20px;
+
             div{
                 grid-row:1;
                 border-radius:50px;
@@ -210,6 +213,7 @@
 
 svg{
     margin-bottom: 20px;
+    
 }
 
 </style>

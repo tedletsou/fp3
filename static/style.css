@@ -31,7 +31,7 @@ h2.meta{
     grid-column: 1;
     border: 2px solid black;
     border-radius: 10px;
-    /* box-shadow: 5px 5px 5px grey; */
+    box-shadow: 5px 5px 5px grey;
     margin: 5px;
 }
 
@@ -40,14 +40,17 @@ h2.meta{
     margin-right: 5px;
     display: grid;
     text-align: center;
+    margin-right: 5px;
+    padding: 10px;
+    grid-template-columns: auto auto auto auto;
+    grid-template-rows: 1fr;
+
+    /* opacity: 80%; */
     /* padding-right: 5px;
     padding-top: 5px; */
     /* font-size: 20px; */
     /* border: 1px solid black; */
     /* border-radius: 5px; */
-    margin-right: 5px;
-    padding: 20px;
-    /* opacity: 80%; */
 }
 
 .meta{
@@ -56,24 +59,29 @@ h2.meta{
 
 .race_selection{
     display: flex;
-    padding:30px;
-    margin:10px;
+    /* padding:10px;
+    margin:10px; */
+    grid-column: 1;
+    grid-row: 1;
     
     input{
+        width: auto;
         padding-left:30px;
         padding-right:30px;
         padding-top:10px;
         padding-bottom: 10px;
         background-color: transparent;
-        border-radius: 10px;
+        border-radius: 5px;
         font-family: 'Helvetica Neue';
     }
 }
 
 .family_selection{
     display: flex;
-    padding:25px;
-    margin:10px;
+    /* padding:10px; */
+    /* margin:10px; */
+    grid-column: 2;
+    grid-row: 1;
     
     input{
         width: auto;
@@ -82,17 +90,17 @@ h2.meta{
         padding-top:10px;
         padding-bottom: 10px;
         background-color: transparent;
-        border-radius: 10px;
+        border-radius: 5px;
         font-family: 'Helvetica Neue';
     } 
 }
 
 .elderly_selection{
-    /* display: grid;
-    grid-template-columns: 5fr 5fr; */
     display: flex;
-    padding:25px;
-    margin:10px;
+    /* padding:25px;
+    margin:10px; */
+    grid-column: 3;
+    grid-row: 1;
 
     input{
         width: auto;
@@ -101,24 +109,26 @@ h2.meta{
         padding-top:10px;
         padding-bottom: 10px;
         background-color: transparent;
-        border-radius: 10px;
+        border-radius: 5px;
         font-family: 'Helvetica Neue';
     }
 }
 
 .corporate_selection{
     display: flex;
-    padding:25px;
-    margin:10px;
+    /* padding:25px; */
+    /* margin:10px; */
+    grid-column: 4;
+    grid-row: 1;
 
     input{
         width: auto;
-        padding-left:30px;
-        padding-right:30px;
-        padding-top:10px;
-        padding-bottom: 10px;
+        padding-left:20px;
+        padding-right:20px;
+        padding-top:5px;
+        padding-bottom: 5px;
         background-color: transparent;
-        border-radius: 10px;
+        border-radius: 5px;
         font-family: 'Helvetica Neue';
     }
 }

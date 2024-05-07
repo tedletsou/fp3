@@ -115,7 +115,7 @@
             tooltipPosition = await computePosition(hoveredDot, evictionTooltip, {
                 strategy: "fixed",
                 middleware: [
-                    offset(1),
+                    offset(10),
                     autoPlacement()
                 ],
             });
@@ -499,7 +499,12 @@
         </dl>
         
         <div class="metric_selection">
-    
+            <dl class="family_selection">
+                <input type="button" value="Family" 
+                on:click={ function() {metric_to_graph= "Family"} }
+                on:mouseenter= {evt=> textInteraction(1, evt)}
+                on:mouseleave={evt => textInteraction(1, evt)}>
+            </dl>
             <dl class="race_selection">
                 <input type="button" value="Race" 
                 on:click={ function() {metric_to_graph= "Race"} }
@@ -507,13 +512,6 @@
                 on:mouseleave={evt => textInteraction(0, evt)}>
 
             </dl>
-            <dl class="family_selection">
-                <input type="button" value="Family" 
-                on:click={ function() {metric_to_graph= "Family"} }
-                on:mouseenter= {evt=> textInteraction(1, evt)}
-                on:mouseleave={evt => textInteraction(1, evt)}>
-            </dl>
-        
             <dl class="elderly_selection">
                 <input type="button" value="Elder" 
                 on:click={ function() {metric_to_graph= "Elderly"} }
@@ -569,6 +567,36 @@
             </p>
         </section>
     </div>
+
+    <!-- <div class="metric_selection2">
+        <dl class="fam_select2">
+            <input type="button" value="Family" 
+            on:click={ function() {metric_to_graph= "Family"} }
+            on:mouseenter= {evt=> textInteraction(1, evt)}
+            on:mouseleave={evt => textInteraction(1, evt)}>
+        </dl>
+        <dl class="race_selection2">
+            <input type="button" value="Race" 
+            on:click={ function() {metric_to_graph= "Race"} }
+            on:mouseenter= {evt=> textInteraction(0, evt)}
+            on:mouseleave={evt => textInteraction(0, evt)}>
+
+        </dl>
+        <dl class="elderly_selection2">
+            <input type="button" value="Elder" 
+            on:click={ function() {metric_to_graph= "Elderly"} }
+            on:mouseenter= {evt=> textInteraction(2, evt)}
+            on:mouseleave={evt => textInteraction(2, evt)}>
+        </dl>
+    
+        <dl class="corporate_selection2">
+            <input type="button" value="Corporate" 
+            on:click={ function() {metric_to_graph= "Corporate"} }
+            on:mouseenter= {evt=> textInteraction(3, evt)}
+            on:mouseleave={evt => textInteraction(3, evt)}>
+        </dl>
+    </div> -->
+<!-- </div> -->
 
     <div class="eviction_animation">
         {#if metric_to_graph.includes("Family")}
