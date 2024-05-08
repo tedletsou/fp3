@@ -552,8 +552,6 @@
                       bin_type={corp_bins} data={data} text={["Low Corporate Ownership"]}/>
         {/if}
 
-        
-        
     </div>
 
     <div class="simulate_winter_ban">

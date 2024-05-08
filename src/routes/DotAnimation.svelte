@@ -17,6 +17,8 @@
     let startX = 5;
     let startY = height/4 ;
     let hoveredIndex = -1;
+    let boxWidth = 20; 
+    let boxHeight = 50;
     $: hoveredEviction = data[hoveredIndex]?? {};
     let tooltipPosition = {x:0, y:0};
     let evictionTooltip;
@@ -29,13 +31,20 @@
         right: width - margin.right
     };
     let yScale = d3.scaleBand();
+    let summer_dots = 0;
+    let spring_dots = 0;
+    let fall_dots = 0;
+    let winter_dots = 0;
+    let season_dot;
+
+    $: season_dot = summer_dots;
 
     // Define your custom colors
     let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E']; // Example colors: red, green, blue, yellow
 
     // Create the ordinal scale with your custom colors
     let fillColor = d3.scaleOrdinal(customColors);
-    //let fillColor = d3.scaleOrdinal(d3.schemeCategory10);
+    let monthColor = d3.scaleOrdinal(["red", "pink", "orange", "blue"]);
     const format = d3.format(".1~%");
 
     $: yScale = yScale.domain(temp_bins).range([usableArea.bottom, usableArea.top]);
@@ -43,9 +52,45 @@
         d3.select(yAxisGridlines).call(d3.axisRight(yScale).tickSize(width-100));
     }
 
-    async function dotInteraction (index, evt){
+    async function dotInteraction (data, index, evt){
         let hoveredDot = evt.target;
         
+        if (evt.type === "animationend")
+        {
+            if ( convertMonthToTemp(data.month) === "Summer")
+            {
+                console.log("I am a summer eviction!!!");
+                summer_dots +=1;
+                // console.log(summer_dots);
+                // console.log();
+            }
+
+            else if (convertMonthToTemp(data.month) === "Spring")
+            {
+                console.log("I am a spring eviction!!!");
+                spring_dots +=1;
+                // console.log(spring_dots);
+                // console.log();
+            }
+
+            else if (convertMonthToTemp(data.month) === "Fall")
+            {
+                console.log("I am a fall eviction!!!");
+                fall_dots +=1;
+                // console.log(fall_dots);
+                // console.log();
+            }
+
+            if (convertMonthToTemp(data.month) === "Winter")
+            {
+                console.log("I am a winter eviction!!!");
+                winter_dots +=1;
+                // console.log(winter_dots);
+                // console.log();
+            }
+            
+        }
+
         if (evt.type === "mouseenter" || evt.type === "focus")
         {
             hoveredIndex = index;
@@ -115,24 +160,40 @@
             return "Summer";
         }
     }
+    function updateDotCount(dot, index)
+    {
+        
+        num_dots +=1;
+    }
 
 </script>
 <style>
 
 @keyframes moveCircles{
+    
+    100%{
+        /* fill: var(--seasonColor); */
+        opacity: 100%;
+        /* transform: scale(1.5); */
+        /* opacity: 0%; */
+    }
     to{
         /* final x position of cirlce */
         cx: var(--xposition);
-
         /* final x position of cirlce */
         cy: var(--yposition);
+        
+            /* changes the color of the circle to match the season */
+        /* fill: var(--seasonColor); */
     }
 }
 .moving_dots{
     opacity: 75%;
     /* animation: moveCircles 20s  ease-in-out; */
-    animation: moveCircles 25s  ease-in-out; 
+    animation: moveCircles 5s ease-in-out; 
     animation-delay: calc(var(--index) * 200ms);
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
 }
 .description{
     /* border: 2px solid black; */
@@ -245,7 +306,7 @@ svg{
             <!-- x, y, width, height -->
             <!-- viewBox="0 0 180 140" -->
             <svg  
-                width={width} height={height}> 
+                width={width+50} height={height}> 
                 <g class="gridlines" transform="translate({usableArea.left}, 0)" bind:this={yAxisGridlines} />
                 <g transform="translate({usableArea.top})" bind:this={yAxis}/>
                 <!-- INSERT AN IMAGE ELEMENT TO  -->
@@ -258,16 +319,35 @@ svg{
                         fill={dataColoring(d, metric, index)}
                         stroke="white"
                         style="
-                        --xposition:{425-Math.random() * 50};
+                        --xposition:{500-Math.random() * 50};
                         --index:{index};
-                        --yposition:{ yScale( convertMonthToTemp(d.month) ) + yScale.bandwidth() / 2 + Math.random()*40}"
+                        --yposition:{ yScale( convertMonthToTemp(d.month) ) + yScale.bandwidth() / 2 + Math.random()*40};
+                        --seasonColor: { monthColor(convertMonthToTemp(d.month)) };"
+                        on:mouseenter= {evt=> dotInteraction(d, index, evt)}
+                        on:mouseleave={evt => dotInteraction(d, index, evt)} 
+                        on:animationend={evt => dotInteraction(d, index, evt)}
+                    />
+                    <!-- <polygon
+                        class="moving_dots"
+                        points="1, -1 2, -2 2, -5 1, -6 -2, -6 -3,
+                        -5 -3, -2 -2, -1 -3, 7 -1, 7 -1, 4 0, 4 0, 7 2, 7"
+                        transform="translate(-7, 0"
+                        fill={dataColoring(d, metric, index)}
+                        stroke="white"
                         on:mouseenter= {evt=> dotInteraction(index, evt)}
                         on:mouseleave={evt => dotInteraction(index, evt)} 
+                    /> -->
+                {/each}
+                
+                {#each temp_bins as bin}
+                    <rect
+                    x={ 600 }
+                    y={ yScale(bin) } 
+                    width={boxWidth}
+                    height={boxHeight}
+                    stroke="black"
+                    fill={monthColor(bin)}
                     />
-                    <!-- animation-delay:{index * 100}ms -->
-                    <!-- --index:{index} -->
-                    <!-- --yposition:{yScale( convertMonthToTemp(d.month) ) + yScale.bandwidth() / 2 + Math.random()*20} -->
-                    <!-- yposition css variable moves the dots to the appropriate bins -->
                 {/each}
             </svg>
         </section>
@@ -279,9 +359,29 @@ svg{
                     style="background-color:{fillColor(bin)}"
                 />
     
-                {#each temp_bins as bin, index}
+                {#each temp_bins as b, index}
                     <!-- <dd class="percent_labels">(bin, temp): ({index}, {i})%</dd> -->
-                    <dd class="percent_labels">%</dd>
+                    {console.log(bin)}
+                    {#if b === "Summer"}
+                        <dd class="percent_labels">{summer_dots} Summer</dd>
+                    {/if}
+
+                    {#if b === "Spring"}
+                        <dd class="percent_labels">{spring_dots}Spring</dd>
+                    {/if}
+
+                    {#if b === "Fall"}
+                        <dd class="percent_labels">{fall_dots}Fall</dd>
+                    {/if}
+
+                    {#if b === "Winter"}
+                        <dd class="percent_labels">{winter_dots}Winter</dd>
+                    {/if}
+                    {:else}
+                    <!-- <dd class="percent_labels">%</dd> -->
+
+                    {console.log(bin)}
+                    
                 {/each}
             {/each}
         </section>
