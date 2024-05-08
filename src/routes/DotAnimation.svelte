@@ -31,64 +31,110 @@
         right: width - margin.right
     };
     let yScale = d3.scaleBand();
-    let summer_dots = 0;
-    let spring_dots = 0;
-    let fall_dots = 0;
-    let winter_dots = 0;
-    let season_dot;
-
-    $: season_dot = summer_dots;
+    let summer_dots_count = [];
+    let spring_dots_count = [];
+    let fall_dots_count = [];
+    let winter_dots_count = [];
+    let categoryScale = d3.scaleBand();
 
     // Define your custom colors
-    let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E']; // Example colors: red, green, blue, yellow
+    // '#46A09E', yellow 
+    let customColors = ['#ECE8A4', '#744665', '#1F5452', '#DECE00']; // Example colors: red, green, blue, yellow
 
     // Create the ordinal scale with your custom colors
     let fillColor = d3.scaleOrdinal(customColors);
-    let monthColor = d3.scaleOrdinal(["red", "pink", "orange", "blue"]);
+    let monthColor = d3.scaleOrdinal(["blue",  "pink", "red", "orange" ]);
     const format = d3.format(".1~%");
 
     $: yScale = yScale.domain(temp_bins).range([usableArea.bottom, usableArea.top]);
     $: {
         d3.select(yAxisGridlines).call(d3.axisRight(yScale).tickSize(width-100));
     }
+    $: summer_dots_count = new Array(bins.length).fill(0);
+    $: spring_dots_count = new Array(bins.length).fill(0);
+    $: fall_dots_count = new Array(bins.length).fill(0);
+    $: winter_dots_count = new Array(bins.length).fill(0);
+    $: categoryScale = categoryScale.domain(bins).range([0, bins.length]);
 
-    async function dotInteraction (data, index, evt){
+
+    // determines the category type for each bin
+    function categoryType(data, metric)
+    {
+        // checks if graphing family bin
+        if(metric.includes("Family"))
+        {
+            return data.family_bins;
+        }
+
+        // checks if graphing race bin
+        if(metric.includes("Race"))
+        {
+            return data.majority_race;
+        }
+
+        // checks if graphing elder bin
+        if(metric.includes("Elder"))
+        {
+            return data.elder_bins;
+        }
+
+        // checks if graphing corporate bin
+        if(metric.includes("Corporate"))
+        {
+            return data.corp_bins;
+        }
+    }
+
+    async function dotInteraction (metric, data, index, evt){
         let hoveredDot = evt.target;
         
+        // checks if the animation has ended for the dot
         if (evt.type === "animationend")
         {
+            // gets the corresponding index for the category
+            let category_type = categoryType(data, metric);           
+            let category_index = categoryScale( category_type);
+            // console.log("category index: ", category_index);
+            // console.log("summer dots count: ", summer_dots_count);
+            // console.log("spring dots count: ", spring_dots_count);
+            // console.log("fall dots count: ", fall_dots_count);
+            // console.log("winter dots count: ", winter_dots_count);
+
+            // checks if eviction was during summer
             if ( convertMonthToTemp(data.month) === "Summer")
             {
-                console.log("I am a summer eviction!!!");
-                summer_dots +=1;
+                // console.log("I am a summer eviction!!!");
+                summer_dots_count[category_index] +=1;
                 // console.log(summer_dots);
                 // console.log();
             }
 
+            // checks if eviction was during spring
             else if (convertMonthToTemp(data.month) === "Spring")
             {
-                console.log("I am a spring eviction!!!");
-                spring_dots +=1;
+                // console.log("I am a spring eviction!!!");
+                spring_dots_count[category_index] +=1;
                 // console.log(spring_dots);
                 // console.log();
             }
 
+            // checks if eviction was during fall
             else if (convertMonthToTemp(data.month) === "Fall")
             {
-                console.log("I am a fall eviction!!!");
-                fall_dots +=1;
+                // console.log("I am a fall eviction!!!");
+                fall_dots_count[category_index] +=1;
                 // console.log(fall_dots);
                 // console.log();
             }
 
+            // checks if eviction was during winter
             if (convertMonthToTemp(data.month) === "Winter")
             {
-                console.log("I am a winter eviction!!!");
-                winter_dots +=1;
+                // console.log("I am a winter eviction!!!");
+                winter_dots_count[category_index] +=1;
                 // console.log(winter_dots);
                 // console.log();
             }
-            
         }
 
         if (evt.type === "mouseenter" || evt.type === "focus")
@@ -277,6 +323,10 @@ svg{
     
 }
 
+.percent_labels{
+    color: var(--season_color);
+}
+
 </style>
 <dl class="animation_container">
     <section class="bin_legend">
@@ -323,9 +373,9 @@ svg{
                         --index:{index};
                         --yposition:{ yScale( convertMonthToTemp(d.month) ) + yScale.bandwidth() / 2 + Math.random()*40};
                         --seasonColor: { monthColor(convertMonthToTemp(d.month)) };"
-                        on:mouseenter= {evt=> dotInteraction(d, index, evt)}
-                        on:mouseleave={evt => dotInteraction(d, index, evt)} 
-                        on:animationend={evt => dotInteraction(d, index, evt)}
+                        on:mouseenter= {evt=> dotInteraction(metric, d, index, evt)}
+                        on:mouseleave={evt => dotInteraction(metric, d, index, evt)} 
+                        on:animationend={evt => dotInteraction(metric, d, index, evt)}
                     />
                     <!-- <polygon
                         class="moving_dots"
@@ -358,32 +408,36 @@ svg{
                     class="bin_circles"
                     style="background-color:{fillColor(bin)}"
                 />
+            {/each}
     
-                {#each temp_bins as b, index}
-                    <!-- <dd class="percent_labels">(bin, temp): ({index}, {i})%</dd> -->
-                    {console.log(bin)}
+            {#each temp_bins.reverse() as b, index}
+                {console.log("row: ", index)}
+
+                {#each bins as bin, i}
+    
+                    <!-- {console.log("season", bin)}
+                    {console.log("column: ", i)} -->
+
                     {#if b === "Summer"}
-                        <dd class="percent_labels">{summer_dots} Summer</dd>
+                    
+                        <dd class="percent_labels" style="--season_color: {fillColor(bin)};">{summer_dots_count[i]}</dd>
                     {/if}
 
                     {#if b === "Spring"}
-                        <dd class="percent_labels">{spring_dots}Spring</dd>
+                        <dd class="percent_labels" style="--season_color: {fillColor(bin)};">{spring_dots_count[i]}</dd>
                     {/if}
 
                     {#if b === "Fall"}
-                        <dd class="percent_labels">{fall_dots}Fall</dd>
+                        <dd class="percent_labels" style="--season_color: {fillColor(bin)};">{fall_dots_count[i]}</dd>
                     {/if}
 
                     {#if b === "Winter"}
-                        <dd class="percent_labels">{winter_dots}Winter</dd>
+                        <dd class="percent_labels" style="--season_color: {fillColor(bin)};">{winter_dots_count[i]}</dd>
                     {/if}
-                    {:else}
-                    <!-- <dd class="percent_labels">%</dd> -->
 
-                    {console.log(bin)}
-                    
                 {/each}
             {/each}
+            
         </section>
     </div>
     
