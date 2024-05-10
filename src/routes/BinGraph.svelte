@@ -18,7 +18,8 @@
 
     // Create the ordinal scale with your custom colors
     let fillColor = d3.scaleOrdinal(customColors);
-    let width = 850, height = 275; // changed the height of the graph from 600 to 450
+    //let width = 850, height = 275; // changed the height of the graph from 600 to 450
+    let width = 800, height = 275; 
     let xAxis, yAxis;
     let yAxisGridlines;
     let hoveredIndex = -1;
@@ -180,6 +181,12 @@
 </script>
 
 <style>
+
+    .boxplot {
+
+        font-size: 100px;
+
+    }
 
 @keyframes marching-ants {
     to{
