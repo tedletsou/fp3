@@ -182,12 +182,6 @@
 
 <style>
 
-    .boxplot {
-
-        font-size: 100px;
-
-    }
-
 @keyframes marching-ants {
     to{
         stroke-dashoffset: -8;
