@@ -76,12 +76,12 @@
             eviction_rate: Number(row.eviction_rate)
         }));
 
-        temp_dataRAW = await d3.csv("updated_monthly.csv", row=> ({
+        temp_dataRAW = await d3.csv("evictions_per_month_with_bins.csv", row=> ({
             ...row,
             mhi: Number(row.mhi),
             eviction_rate: Number(row.eviction_rate),
             year: Number(row.year),
-            Month: Number(row.Month),
+            month: Number(row.month),
             filings: Number(row.filings)
         }));
 
