@@ -962,8 +962,6 @@
                       bin_type={corp_bins} data={data} text={["Low Corporate Ownership"]}/>
         {/if}
 
-        
-        
     </div>
 
     <!-- <div class="metric_selection2">
