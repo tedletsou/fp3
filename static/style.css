@@ -6,7 +6,7 @@
 
 h2.meta{
     font-size: 50px;
-    font-family: 'Helvetica Neue';
+    font-family: 'Helvetica';
 }
 
 .meta_legend{
@@ -18,7 +18,7 @@ h2.meta{
         font-size: 15px;
         text-transform: uppercase;
         color: rgb(99, 99, 99);
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica';
     }
 
     dt{
@@ -72,7 +72,7 @@ h2.meta{
         padding-bottom: 10px;
         background-color: transparent;
         border-radius: 5px;
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica';
     }
 }
 
@@ -91,7 +91,7 @@ h2.meta{
         padding-bottom: 10px;
         background-color: transparent;
         border-radius: 5px;
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica';
     } 
 }
 
@@ -110,7 +110,7 @@ h2.meta{
         padding-bottom: 10px;
         background-color: transparent;
         border-radius: 5px;
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica';
     }
 }
 
@@ -129,7 +129,7 @@ h2.meta{
         padding-bottom: 5px;
         background-color: transparent;
         border-radius: 5px;
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica';
     }
 }
 
@@ -176,7 +176,7 @@ dl.info
     backdrop-filter: blur(10px);
     margin:0px;
     padding:5px;
-    font-family: 'Helvetica Neue';
+    font-family: 'Helvetica';
     transition-duration: 50ms;
     transition-property: opacity, visibility;
 
@@ -221,7 +221,7 @@ dl.info
         font-size: 15px;
         text-transform: uppercase;
         color: rgb(99, 99, 99);
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica';
     }
 
     dt{
@@ -238,7 +238,7 @@ div.full_page{
     margin-bottom: 100px;
     margin-right: 50px;
     /* margin-left: 50px; */
-    font-family: 'Helvetica Neue';
+    font-family: 'Helvetica';
 }
 
 .narrative1{
@@ -330,7 +330,7 @@ div.full_page{
     .slider_label{
         font-style: italic;
         font-size: 25px;
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica';
     }
 }
 
@@ -350,7 +350,7 @@ div.full_page{
 }
 
 .eviction_animation{
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
 }
 
 div.full_graph{
@@ -363,4 +363,16 @@ div.full_graph{
         grid-column: 2 / 3;
         grid-row: 3;
     }   
+}
+
+@keyframes rectangleTransitions{
+    
+    0%
+    {
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+    
 }

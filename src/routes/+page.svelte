@@ -518,13 +518,13 @@
                 on:mouseenter= {evt=> textInteraction(2, evt)}
                 on:mouseleave={evt => textInteraction(2, evt)}>
             </dl>
-        
+            <!--         
             <dl class="corporate_selection">
                 <input type="button" value="Corporate" 
                 on:click={ function() {metric_to_graph= "Corporate"} }
                 on:mouseenter= {evt=> textInteraction(3, evt)}
                 on:mouseleave={evt => textInteraction(3, evt)}>
-            </dl>
+            </dl> -->
         </div>
     </div>
     
@@ -546,11 +546,11 @@
                       xScale={xScaleElder} metric={metric_to_graph}
                       bin_type={elder_bins} data={data} text={["Homogenous regions without any elderly population experience far lower eviction "]}/>
         {/if}
-        {#if metric_to_graph.includes("Corporate")}
+        <!-- {#if metric_to_graph.includes("Corporate")}
             <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
                       xScale={xScaleCorp} metric={metric_to_graph}
                       bin_type={corp_bins} data={data} text={["Low Corporate Ownership"]}/>
-        {/if}
+        {/if} -->
 
     </div>
 
