@@ -118,17 +118,9 @@
             });
         };
         
-        // temp_data
-
     });
 
-    function addDateColumn(year, month)
-    {
-        let date = new Date(year, d3.timeParse('%B')(month).getMonth());
-
-        return date;
-    }
-
+    // $: data  = radio_button_pushed ? dataRAW.filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1) : dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
     $:
     {
         evict_dataRAW.forEach( function(entry) {
@@ -136,7 +128,7 @@
         });
     }
 
-    // $: data  = radio_button_pushed ? dataRAW.filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1) : dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
+
     $: evict_data = evict_dataRAW.filter((d) => d.year <= selectedYear);
     $: data = dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
     $: temp_data = isChecked ? temp_dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.majority_race !== '').filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.mhi > minVal).filter((d) => d.mhi < maxVal) : temp_dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.majority_race !== '').filter((d) => d.mhi > minVal).filter((d) => d.mhi < maxVal);
@@ -220,6 +212,13 @@
             summary_stats.push(summary_stat);
         }
         return summary_stats;
+    }
+
+    function addDateColumn(year, month)
+    {
+        let date = new Date(year, d3.timeParse('%B')(month).getMonth());
+
+        return date;
     }
 
     function calculate_box_plot(binned_data)
@@ -609,7 +608,6 @@
         border-radius: 5px; /* Optional: rounds the corners of the slider track */
         position: relative;
         margin: 10px 0; /* Adds some space around the slider */
-        margin-left: 400px;
     }
 
     /* Styles for the thumb (the draggable part of the slider) */
@@ -723,8 +721,8 @@
                     In fact, eviction has been increasing over the past years throughout the whole US and Massachusetts is no exception to that. 
                     Move the slider below to check how eviction has changed in MA from 2020 to 2023:</p>
                 <div class="chart-container">
-                    <EvictionTime data={evict_data} raw_data={evict_dataRAW}/>
-                    <input type="range" bind:value={selectedYear} min="2020" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
+                    <EvictionTime data={evict_data} />
+                    <input type="range" bind:value={selectedYear} min="2000" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
                 </div>
                 <p>As we see, the number of eviction filings has doubled in 2023 in the Boston area compared to total evictions in 2020.</p>
             </div>
