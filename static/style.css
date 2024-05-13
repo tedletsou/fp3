@@ -206,7 +206,7 @@ dl.info
     }
 
     circle{
-        transition: 50ms;
+        transition: 100ms;
         transform-origin: center;
         transform-box: fill-box;
         &:hover
