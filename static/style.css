@@ -236,7 +236,7 @@ dl.info
 
 div.full_page{
     display: grid;
-    grid-template-columns: 150fr 200fr 10fr;
+    grid-template-columns: 150fr 200fr;
     grid-template-rows: 10fr auto auto auto;
     /* background-image: linear-gradient(white, rgb(0, 217, 255)); */
     margin-top: 30px;
@@ -245,6 +245,15 @@ div.full_page{
     /* margin-left: 50px; */
     font-family: 'Helvetica', sans-serif;
 }
+
+.Text-vis {
+
+    grid-column: 1 / -1;
+    margin-left: 150px;
+    margin-right: 100px;
+    font-size: 20px;
+}
+
 
 .narrative1{
     grid-column: 1 / -1;
@@ -357,10 +366,9 @@ div.full_page{
 
 .eviction_animation{
     grid-column: 1 / -1;
-    margin-top: -80px;
+    margin-top: -50px;
     margin-left: 150px;
     margin-right: 150px;
-    margin-top: 10px;
 }
 
 div.full_graph{

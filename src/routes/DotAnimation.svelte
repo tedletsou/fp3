@@ -45,8 +45,10 @@
 
     // Define your custom colors
     // '#46A09E', yellow 
-    let customColors = ['#ECE8A4', '#744665', '#1F5452', '#DECE00']; // Example colors: red, green, blue, yellow
+    let customColors = ['#46A09E', '#744665', '#d43264', '#DECE00']; // Example colors: red, green, blue, yellow
+    //let customColors = ['#ECE8A4', '#744665', '#1F5452', '#DECE00']; // Example colors: red, green, blue, yellow
 
+    
     // Create the ordinal scale with your custom colors
     let fillColor = d3.scaleOrdinal(customColors);
     let monthColor = d3.scaleOrdinal(["blue",  "pink", "red", "orange" ]);
@@ -242,8 +244,8 @@
 .moving_dots{
     opacity: 75%;
     /* animation: moveCircles 20s  ease-in-out; */
-    animation: moveCircles 3s ease-in-out; 
-    animation-delay: calc(var(--index) * 50ms);
+    animation: moveCircles 5s ease-in-out; 
+    animation-delay: calc(var(--index) * 100ms);
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }

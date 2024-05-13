@@ -1,27 +1,33 @@
 <script>
     import * as d3 from "d3";
     export let data = [];
+    export let raw_data = [];
 
     let svg;
     let width = 800, height = 275;
     let margin = {top: 20, right: 30, bottom: 70, left: 70}; // Adjusted margins to provide space for labels
 
+    // will need to incorporate the months in the x axis 
     // Set the scales with fixed domains
-    $: xScale = d3.scaleLinear()
-                 .domain([2000, 2023]) // Set fixed domain for years
-                 .range([margin.left, width - margin.right]);
+    // d3.scaleTime().domain(d3.extent(commits, d => d.datetime))
+
+    $: xScale = d3.scaleTime()
+                 .domain(d3.extent(raw_data, d => d.date)) // Set fixed domain for years
+                 .range([margin.left, width - margin.right])
+                 .nice();
 
     $: yScale = d3.scaleLinear()
-                 .domain([0, 12]) // Set fixed domain for eviction rate
+                 .domain([0, d3.max(raw_data, d => d.total_filings)]) // Set fixed domain for eviction rate
                  .range([height - margin.bottom, margin.top]);
-
+    // $: data = d3.filter( (raw_data) => d.year <= selectedYear);
     $: {
         if (svg) {
             // Render x-axis
             d3.select(svg)
               .select(".x-axis")
               .attr("transform", `translate(0,${height - margin.bottom})`)
-              .call(d3.axisBottom(xScale).tickFormat(d3.format("d")));
+            //   .call(d3.axisBottom(xScale).tickFormat(d3.format("d")));
+            .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%B %Y")));
 
             // Render y-axis
             d3.select(svg)
@@ -43,7 +49,7 @@
               .attr("y", 15)
               .attr("x", 0 - (height / 2.5))
               .style("text-anchor", "middle")
-              .text("Eviction Rate (%)");
+              .text("Total Eviction Filings");
         }
     }
 </script>
@@ -72,7 +78,7 @@
         <text class="y-label"></text> <!-- Y-axis label -->
         <!-- Data points -->
         {#each data as d}
-            <circle cx={xScale(d.year)} cy={yScale(d.eviction_rate)} r="5" fill="#744665"></circle>
+            <circle cx={xScale(d.date)} cy={yScale(d.total_filings)} r="5" fill="#744665"></circle>
         {/each}
     </svg>
 </div>

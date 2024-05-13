@@ -14,7 +14,8 @@
     export let yScale = d3.scaleLinear();
 
     // Define your custom colors
-    let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E']; // Example colors: red, green, blue, yellow
+    //let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E']; // Example colors: red, green, blue, yellow
+    let customColors = ['#46A09E', '#744665', '#d43264', '#DECE00']; // Example colors: red, green, blue, yellow
 
     // Create the ordinal scale with your custom colors
     let fillColor = d3.scaleOrdinal(customColors);

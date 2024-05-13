@@ -45,13 +45,13 @@
     let tooltipPosition = {x:0, y:0};
     let evictionTooltip;
     const format = d3.format(".1~%");
-    let selectedYear = 2000;
+    let selectedYear = 2020;
 
    //let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E'];
 
     let rangePercentage;
 
-    $: rangePercentage = ((selectedYear - 2000) / (2023 - 2000)) * 100;
+    $: rangePercentage = ((selectedYear - 2020) / (2023 - 2020)) * 100;
 
     // defining axes
     let margin = {top: 10, right: 10, bottom: 30, left:40};
@@ -85,7 +85,7 @@
             filings: Number(row.filings)
         }));
 
-        evict_dataRAW = await d3.csv("fake_eviction.csv", row=> ({
+        evict_dataRAW = await d3.csv("month_vs_filings.csv", row=> ({
             ...row,
             year: Number(row.year),
             eviction_rate: Number(row.eviction_rate),
@@ -121,6 +121,20 @@
         // temp_data
 
     });
+
+    function addDateColumn(year, month)
+    {
+        let date = new Date(year, d3.timeParse('%B')(month).getMonth());
+
+        return date;
+    }
+
+    $:
+    {
+        evict_dataRAW.forEach( function(entry) {
+            entry.date = addDateColumn(entry.year, entry.month);
+        });
+    }
 
     // $: data  = radio_button_pushed ? dataRAW.filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1) : dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
     $: evict_data = evict_dataRAW.filter((d) => d.year <= selectedYear);
@@ -588,13 +602,14 @@
 
     .year-slider {
         -webkit-appearance: none; /* Removes default styling for sliders in WebKit browsers */
-        width: 100%; /* Slider takes full width of its container */
+        width: 30%; /* Slider takes full width of its container */
         height: 8px; /* Sets the slider track height */
         background: #ddd; /* Light grey background for the slider track */
         outline: none; /* Removes the outline on focus */
         border-radius: 5px; /* Optional: rounds the corners of the slider track */
         position: relative;
         margin: 10px 0; /* Adds some space around the slider */
+        margin-left: 400px;
     }
 
     /* Styles for the thumb (the draggable part of the slider) */
@@ -667,7 +682,8 @@
         }
 
         h3, p {
-            margin: 0;
+            margin-top: 10px;
+            margin-bottom: 10px;
             font-size: 20px; /* for p */
             line-height: 1.5;
         }
@@ -680,6 +696,7 @@
         }
 
     }
+
 
     /* let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E']; */
 </style>
@@ -706,8 +723,8 @@
                     In fact, eviction has been increasing over the past years throughout the whole US and Massachusetts is no exception to that. 
                     Move the slider below to check how eviction has changed in MA from 2020 to 2023:</p>
                 <div class="chart-container">
-                    <EvictionTime data={evict_data} />
-                    <input type="range" bind:value={selectedYear} min="2000" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
+                    <EvictionTime data={evict_data} raw_data={evict_dataRAW}/>
+                    <input type="range" bind:value={selectedYear} min="2020" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
                 </div>
                 <p>As we see, the number of eviction filings has doubled in 2023 in the Boston area compared to total evictions in 2020.</p>
             </div>
@@ -717,15 +734,16 @@
                 class:fadeInRight={visibleSections[1]}>
                 <h3 style="color: #744665">What challenges do evictees face?</h3>
                 <p>Let’s put ourselves in the shoes of an evictee. 
-                    In Boston, you are more than three times as likely to be evicted in neighborhoods with majority people of color and around two times more likely in a neighborhood with a large fraction of families.</p>
+                    In Boston, you are <b>more than three times</b> as likely to be evicted in neighborhoods with majority people of color and around two times more likely in a neighborhood with a large fraction of families.</p>
                 <p>No matter what time of year, evictions are cruel and traumatizing. </p>
                 <p>Do you have a place to go?</p>
                 <p>Many do not, and shelters fill up, especially during winter. As people seek wealth, shelters fill up. </p>
                 <img src="images/image1.png" alt="">
-                <p class="pic-des"><i style="color: #8a8a8a">A man experiencing homeless stands beside a pile of his belongings, at a homeless encampment near the Charles River, January 24, 2024. The weather dropped below freezing. 
+                <p class="pic-des"><i style="color: #8a8a8a">A man experiencing homeless rests in a bus stop, seeking shelter from a winter storm. Dec. 17, 2020 in Massachusetts.
                 </i></p>
                 <a class="pic-des" style="color: #8a8a8a" href="https://www.wgbh.org/news/local/2024-03-06/after-mass-and-cass-crackdown-homeless-community-cast-out-into-the-shadows-of-boston">Tori Bedford/GBH news 
                 </a>
+                
             </div>
 
              <div bind:this={sections[2]}
@@ -736,7 +754,7 @@
                 <p><i style="color: #8a8a8a">Davie is a European immigrant living on the streets of Cambridge for two years. He prefers to sleep at the Harvard Square Homeless shelter, but beds are lotteried, and on cold nights when more people are vying for shelter, Davie is left to camp outdoors. </i></p>
                 <p>Davie is not alone. While most homeless shelters in Cambridge typically at full capacity, there is no more room for the greater influx of people during cold weather. </p>
                 <img src="images/image2.png" alt="" >
-                <p class="pic-des"><i style="color: #8a8a8a">A man experiencing homeless rests in a bus stop, seeking shelter from a winter storm. Dec. 17, 2020 in Massachusetts.
+                <p class="pic-des"><i style="color: #8a8a8a">A man experiencing homeless stands beside a pile of his belongings, at a homeless encampment near the Charles River, January 24, 2024. The weather dropped below freezing. 
                 </i></p>
                 <p class="pic-des" style="color: #8a8a8a">Elise Amendola/AP</p>
             </div>
@@ -775,7 +793,7 @@
              <div bind:this={sections[6]}
                 class="section section-left"
                 class:fadeInLeft={visibleSections[6]}>
-                <h3 style="color: #744665">But things can change. A winter moratorium on eviction can protect people. 
+                <h3 style="color: #744665">Brutal Boston winters
                 </h3>
                 <p><i style="color: #46A09E"> “I really don’t want to see another winter here in Massachusetts. This is a bad one.” - Martin </i></p>
                 <p><i style="color: #8a8a8a"> Martin, 48 on the streets of Cambridge, has experienced several snowstorms, resulting in numerous bouts of pneumonia. </i></p>   
@@ -791,9 +809,14 @@
                 class:fadeInRight={visibleSections[7]}>
                 <h3 style="color: #744665">Winter evictions are especially dangerous
                 </h3>
-                <p>Subfreezing temperatures can occur more than 90 days a year in Boston. Yet, despite ranking as one of the coldest major cities in America, Boston lacks eviction protection during winter months. Families can be evicted in the dead of winter, with nowhere to go. Evictions are always cruel and traumatizing, but winter evictions are especially dangerous–The National Coalition for Homelessness estimates that 700 people experiencing homelessness die from hypothermia each year. 
+                <p>Despite ranking as one of the coldest major cities in America, Boston lacks eviction protection during winter months. Families can be evicted in the dead of winter, with nowhere to go. But things can change. A winter moratorium on eviction can protect people.
                 </p>
+                <p><i style="color: #46A09E"> “I was a landlord for many years. Even though I followed state laws regarding this eviction, I came to realize these laws are unjust and need to be changed.” -Gerry Willis, </i></p>
+                <p><i style="color: #8a8a8a"> Garry is a former landlord who owned multiple properties. He evicted a male tenant who had received multiple noise complaints. The evicted tenant died in a heatless garage. 
+
+                </i></p> 
             </div>
+
 
             <div bind:this={sections[8]}
                 class="section section-left"
@@ -803,15 +826,25 @@
                 <p>France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. While statewide or national legislation would be the best approach, Boston can <b>work quickly to protect its population now.</b>  Boston’s local Boards of Health can declare states of emergency that prevent winter evictions. 
                 </p>
             </div>
+
+            <div bind:this={sections[9]}
+                class="section section-right"
+                class:fadeInRight={visibleSections[9]}>
+                <h3 style="color: #744665">What can we do?
+                </h3>
+                <p>
+                    Let’s explore how evictions in Boston impact different populations, and critically, how a winter eviction moratorium can help those in need. </p>
+            </div>
+
             
             <div class="bottom-text">
-                <h3 style = "color: #744665" > <b>Boston’s lack of winter protection greatly affects historically discriminated groups: families, the elderly, and people of color. 
-                    A moratorium on winter evictions would benefit these groups the most. 
+                <h3 style = "color: #744665" > <b>Boston’s lack of winter protection greatly affects historically discriminated groups: families, the elderly, and people of color. A moratorium on winter evictions would benefit these groups the most. 
+                
                 </b></h3> 
             </div>
     </div>
 
-    <div class="selection_column section-left" bind:this={sections[9]} 
+    <div class="selection_column section-left" bind:this={sections[10]} 
         class:fadeInLeft={visibleSections[9]}>
         <div class="double-slider-box">
             <h3 class="range-title">Looking at evictions from groups with matched incomes</h3>
@@ -897,26 +930,30 @@
         {#if metric_to_graph.includes("Family")}
             <BinGraph binned_data={box_plot_stats_household_array} yScale={yScale}
                       xScale={xScaleHousehold} metric={metric_to_graph} 
-                      bin_type={family_bins} data={data} text={["Families (especially with children) increase the risk of eviction. "]}/>
+                      bin_type={family_bins} data={data} text={["In Boston, you are more than three times as likely to be evicted in neighborhoods with majority people of color. Eviction rates are lowest in regions with a majority white population."]}/>
         {/if}   
         
         {#if metric_to_graph.includes("Race")}
             <BinGraph binned_data={box_plot_stats_race_array} yScale={yScale}
                       xScale={xScaleRace} metric={metric_to_graph}
-                      bin_type={race_bins} data={data} text={["Eviction rates are lowest in regions with a majority white population.  "]}/>
+                      bin_type={race_bins} data={data} text={["In Boston, you are around two times more likely to be evicted in a neighborhood with a large fraction of families. Families with additional children can lead to even higher eviction rates. It has also been shown that the proportion of children in a neighborhood predicts eviction rates better than poverty or race."]}/>
         {/if}
 
         {#if metric_to_graph.includes("Elder")}
             <BinGraph binned_data={box_plot_stats_elder_array} yScale={yScale}
                       xScale={xScaleElder} metric={metric_to_graph}
-                      bin_type={elder_bins} data={data} text={["Homogenous regions without any elderly population experience far lower eviction "]}/>
-        {/if}
-        {#if metric_to_graph.includes("Corporate")}
-            <BinGraph binned_data={box_plot_stats_corp_array} yScale={yScale}
-                      xScale={xScaleCorp} metric={metric_to_graph}
-                      bin_type={corp_bins} data={data} text={["Low Corporate Ownership"]}/>
+                      bin_type={elder_bins} data={data} text={["In Boston, you are around two times more likely to be evicted in a neighborhood with some elderly population. Homogenous regions without any elderly population experience far lower eviction."]}/>
         {/if}
 
+    </div>
+
+    <div class="Text-vis">
+        {#if !isChecked}
+            <p>Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups. Let’s look at <b>individual households</b> being evicted. Each household flows from a place of stability in their home to the season outdoors where they are evicted. Evictions begin in January 2021 and are shown over time until October 2023.</p>
+        {:else}
+            <p>A winter eviction ban prevents people from being evicted into subfreezing temperatures, and especially helps historically disadvantaged populations. Let’s look at <b>individual households</b> being evicted. Each household flows from a place of stability in their home to the season outdoors where they are evicted. Evictions begin in January 2021 and are shown over time until October 2023.
+            </p>
+        {/if}
     </div>
 
     <div class="eviction_animation">
@@ -934,24 +971,94 @@
             <DotAnimation data={temp_data} text={"Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups.  A winter eviction moratorium stops people from being evicted into freezing temperatures outside, especially benefitting already disadvantaged groups. "}
             bins={elder_bins} metric={metric_to_graph} />
         {/if}
-
-        {#if metric_to_graph.includes("Corporate")}
-            <DotAnimation data={temp_data} text={"Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups.  A winter eviction moratorium stops people from being evicted into freezing temperatures outside, especially benefitting already disadvantaged groups. "}
-            bins={corp_bins} metric={metric_to_graph} />
-        {/if}
         
     </div>
 
 </div>
 
 <div class="footer">
+
     <div class="final-section">
-        <h3 style="color: #744665">Boston lacks cold-weather renter protections
+        <h3 style="color: #744665">Are you at risk of being evicted from your home? See the following resources to help
         </h3>
-        <p>France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. While statewide or national legislation would be the best approach, Boston can <b>work quickly to protect its population now.</b>  Boston’s local Boards of Health can declare states of emergency that prevent winter evictions. 
+        <a href="https://www.boston.gov/sites/default/files/document-file-09-2017/eviction_guide_2017.pdf">https://www.boston.gov/sites/default/files/document-file-09-2017/eviction_guide_2017.pdf</a>
+        <a href="https://www.mass.gov/guides/tenants-guide-to-eviction">https://www.mass.gov/guides/tenants-guide-to-eviction</a>
+        <a href="https://www.masslegalhelp.org/housing-apartments-shelter/eviction/eviction-basics-and-notices-quit">https://www.masslegalhelp.org/housing-apartments-shelter/eviction/eviction-basics-and-notices-quit</a>
+
+        <h3 style="color: #744665">If you are interested in helping pursue a winter eviction ban at Boston, check out the following resources to learn more! 
+        </h3>
+        <a href="https://www.georgewileycenter.org/copy-of-food-security">https://www.georgewileycenter.org/copy-of-food-security</a>
+        <a href="https://winterwalk.org/">https://winterwalk.org/</a>
+        <a href="https://commonwealthbeacon.org/opinion/mass-should-ban-evictions-during-the-winter-months/">https://commonwealthbeacon.org/opinion/mass-should-ban-evictions-during-the-winter-months/</a>
+
+        <h3 style="color: #744665">Other boston housing advocacy groups: 
+        </h3>
+        <p>Abundant housing Massachusetts, Dudley Street Neighborhood Initiative, A Home 4 Everyone, Boston Tenant Coalition, The Boston Foundation, Fair Housing Center of Greater Boston, Massachusetts Housing & Shelter Alliance
+        </p>
+  
+    </div>
+
+    
+    <div class="final-section">
+        <h3 style="color: #744665"> Additional details on calculations 
+        </h3>
+        <p> Eviction rate for each Geoid is calculated by summing over the total evictions that occurred between 2020 and 2023. We normalized the number of evictions by the number of households, so that eviction rates are comparable across neighborhoods with different population sizes. In order to allow for optimal comparability, we also allow users to select income ranges for different neighborhoods to focus on. For income, we use the median household income of the geoid.
+        </p>
+
+        <p> Neighborhood regions (geoids) are divided into bins for each population category, focusing on different populations that have historically been disproportionately been affected by evictions. 
+        </p>
+
+        <p> <b>Family:</b>
+            At first the family rate is calculated by dividing the number of family households by the total number of households in each geoid. Then geoids are divided into three bins: family, non-family and mixed based on whether family rate is more that 60%, less than 40% or between 40% and 60% respectively.
+            </p>
+
+        <p> <b>Majority Race:</b>
+            Geoids are divided into four categories: Black, Latino, White and Other depending on the predominant race of their residents.
+        </p>
+
+        <p> <b>Elderly:</b>
+            The elderly rate for each geoid has been calculated by dividing the population aged 65 and over by the total population living in that geoid. Similarly geoids are grouped into two categories: “some elders” with a 6%  or higher elderly rate and “no elders” with a less than 6% elderly rate.
+        </p>
+
+        <p> <b>Winter eviction moratorium simulation:</b>
+            While additional data from places that have had winter eviction bans could help inform our choices, we chose to simulate a winter eviction moratorium as follows: Each year we add 25% of the winter evictions that would have happened to the Fall season (as some landlords may move to evict people sooner knowing that they can’t during Winter), add 25% of the winter eviction to Spring (as some evictions that would have happened during Winter are simply postponed), and remove 50% of the winter evictions (as the extra time afforded, as during moratorium periods during COVID, can lead to some evictions that would have happened being permanently avoided). 
+        </p>
+    </div>
+
+    <div class="final-section">
+        <h3 style="color: #744665">Citations</h3>
+        <a href="https://www.nwpb.org/2023/12/14/evictions-on-the-rise-city-service-providers-expanding-winter-shelter-options/">https://www.nwpb.org/2023/12/14/evictions-on-the-rise-city-service-providers-expanding-winter-shelter-options/</a>
+        <a href="https://www.wgbh.org/news/local/2024-03-06/after-mass-and-cass-crackdown-homeless-community-cast-out-into-the-shadows-of-boston">https://www.wgbh.org/news/local/2024-03-06/after-mass-and-cass-crackdown-homeless-community-cast-out-into-the-shadows-of-boston</a>
+        <a href="https://docs.google.com/document/d/1WyRsPIknUgCzNeamxugdKsALguGpwLlu4t8n-XdJh00/edit">https://docs.google.com/document/d/1WyRsPIknUgCzNeamxugdKsALguGpwLlu4t8n-XdJh00/edit</a>
+        <a href="https://centerforhealthjournalism.org/our-work/reporting/part-iii-evicted-people-homelessness-often-follows?">https://centerforhealthjournalism.org/our-work/reporting/part-iii-evicted-people-homelessness-often-follows?</a>
+        <a href="https://palletshelter.com/blog/winter-affect-homelessness/">https://palletshelter.com/blog/winter-affect-homelessness/</a>
+        <a href="https://www.thecrimson.com/article/2014/2/13/for-square-homeless-winter/">https://www.thecrimson.com/article/2014/2/13/for-square-homeless-winter/</a>
+        <a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2687991">https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2687991</a>
+        <a href="https://www.wgbh.org/news/local/2021-10-19/bostons-homeless-services-see-new-reach-under-pandemic-induced-changes">https://www.wgbh.org/news/local/2021-10-19/bostons-homeless-services-see-new-reach-under-pandemic-induced-changes</a>
+        <a href="https://publications.aap.org/pediatrics/article-pdf/148/5/e2021052892/1196840/peds_2021052892.pdf">https://publications.aap.org/pediatrics/article-pdf/148/5/e2021052892/1196840/peds_2021052892.pdf</a>
+    </div>
+
+    <div class="final-section">
+        <h3 style="color: #744665">Acknowledgment statement 
+        </h3>
+        <p>This project was developed with guidance and feedback from the Metropolitan Area Planning Commission (MAPC). We appreciate the data from the Eviction Lab and from MAPC, including Eviction (2020-2023), Owner Occupancy (2020), Corporate Ownership (2020), Residential Sales, and Census (2020).
         </p>
     </div>
 </div>
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
 
 
 
