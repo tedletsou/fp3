@@ -45,13 +45,13 @@
     let tooltipPosition = {x:0, y:0};
     let evictionTooltip;
     const format = d3.format(".1~%");
-    let selectedYear = 2000;
+    let selectedYear = 2020;
 
    //let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E'];
 
     let rangePercentage;
 
-    $: rangePercentage = ((selectedYear - 2000) / (2023 - 2000)) * 100;
+    $: rangePercentage = ((selectedYear - 2020) / (2023 - 2020)) * 100;
 
     // defining axes
     let margin = {top: 10, right: 10, bottom: 30, left:40};
@@ -85,7 +85,7 @@
             filings: Number(row.filings)
         }));
 
-        evict_dataRAW = await d3.csv("fake_eviction.csv", row=> ({
+        evict_dataRAW = await d3.csv("month_vs_filings.csv", row=> ({
             ...row,
             year: Number(row.year),
             eviction_rate: Number(row.eviction_rate),
@@ -118,11 +118,19 @@
             });
         };
         
-        // temp_data
-
     });
 
+   
+
     // $: data  = radio_button_pushed ? dataRAW.filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1) : dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
+    $:
+    {
+        evict_dataRAW.forEach( function(entry) {
+            entry.date = addDateColumn(entry.year, entry.month);
+        });
+    }
+
+
     $: evict_data = evict_dataRAW.filter((d) => d.year <= selectedYear);
     $: data = dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.mhi > minVal ).filter((d) => d.mhi < maxVal);
     $: temp_data = isChecked ? temp_dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.majority_race !== '').filter((d) => d.month >= 4).filter((d) => d.month < 11).filter((d) => d.mhi > minVal).filter((d) => d.mhi < maxVal) : temp_dataRAW.filter((d) => d.family_bins !== '').filter((d) => d.eviction_rate < 1).filter((d) => d.majority_race !== '').filter((d) => d.mhi > minVal).filter((d) => d.mhi < maxVal);
@@ -206,6 +214,13 @@
             summary_stats.push(summary_stat);
         }
         return summary_stats;
+    }
+
+    function addDateColumn(year, month)
+    {
+        let date = new Date(year, d3.timeParse('%B')(month).getMonth());
+
+        return date;
     }
 
     function calculate_box_plot(binned_data)
@@ -588,13 +603,14 @@
 
     .year-slider {
         -webkit-appearance: none; /* Removes default styling for sliders in WebKit browsers */
-        width: 100%; /* Slider takes full width of its container */
+        width: 30%; /* Slider takes full width of its container */
         height: 8px; /* Sets the slider track height */
         background: #ddd; /* Light grey background for the slider track */
         outline: none; /* Removes the outline on focus */
         border-radius: 5px; /* Optional: rounds the corners of the slider track */
         position: relative;
-        margin: 10px 0; /* Adds some space around the slider */
+        margin-left:350px;
+        /* margin: 50px 0;  */
     }
 
     /* Styles for the thumb (the draggable part of the slider) */
@@ -706,8 +722,9 @@
                     In fact, eviction has been increasing over the past years throughout the whole US and Massachusetts is no exception to that. 
                     Move the slider below to check how eviction has changed in MA from 2020 to 2023:</p>
                 <div class="chart-container">
-                    <EvictionTime data={evict_data} />
-                    <input type="range" bind:value={selectedYear} min="2000" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
+                    <!-- <EvictionTime data={evict_data} /> -->
+                    <EvictionTime data={evict_data} raw_data={evict_dataRAW}/>
+                    <input type="range" bind:value={selectedYear} min="2020" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
                 </div>
                 <p>As we see, the number of eviction filings has doubled in 2023 in the Boston area compared to total evictions in 2020.</p>
             </div>
