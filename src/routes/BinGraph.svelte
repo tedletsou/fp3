@@ -182,15 +182,25 @@
 
 <style>
 
-@keyframes marching-ants {
-    to{
-        stroke-dashoffset: -8;
-    }
-}
+    .metric_info {
 
-p{
-    display: inline;
-}
+        margin-top: -50px;
+    }
+
+    .ave-evict{
+        font-size: 20px;
+    }
+
+
+    @keyframes marching-ants {
+        to{
+            stroke-dashoffset: -8;
+        }
+    }
+
+    p{
+        display: inline;
+    }
 </style>
 
 <div class="full_graph">
@@ -243,6 +253,7 @@ p{
         {#each binned_data as bin, index}
             {d3.select(xAxis).call(d3.axisBottom(xScale))}
             {#if bin.q1 }
+
                 <line 
                     x1={ xScale(bin_type[index]) + xScale.bandwidth() / 2 }
                     x2={ xScale(bin_type[index]) + xScale.bandwidth() / 2 }
@@ -260,6 +271,7 @@ p{
                     stroke="black"
                     width=80
                 />
+                
                 <rect
                     x={ xScale(bin_type[index]) - boxWidth/2 + xScale.bandwidth() / 2}
                     y={ yScale(bin.q3) } 
@@ -268,8 +280,58 @@ p{
                     stroke="black"
                     fill={fillColor(bin_type[index])}
                     fill-opacity=0.5
-                />     
-            {/if}   
+                /> 
+
+                <rect
+                    x={ xScale(bin_type[index]) + xScale.bandwidth() / 2 - 50 }
+                    y={ 15 }
+                    width="100"
+                    height="35"
+                    fill=#f2f2f2
+                    stroke-width="1"
+                    rx="5"
+                />
+                
+                <text class="ave-evict"
+
+                    x={ xScale(bin_type[index]) + xScale.bandwidth() / 2 }
+                    y={40}
+                    text-anchor="middle"
+                    
+                    fill="black">
+                        
+                    {(bin.q2 * 100).toFixed(2)} {" %"}
+
+                </text>
+
+                <text class="ave-evict"
+
+                    x={ width/2 }
+                    y={-10}
+                    text-anchor="middle"
+                    
+                    
+                    fill="black">
+                        
+                    Average eviction rate:
+
+                </text>
+
+                
+            {/if}  
+
+            <!-- {:else}
+                <text class="ave-label"
+
+                    x={ xScale(bin_type[index]) + xScale.bandwidth() / 2 }
+                    y={40}
+                    text-anchor="middle"
+                    font-size="20px"
+                    fill="black">
+                        
+                    {"No data"}
+                    
+                </text> -->
         {/each}
         
         {#each data as d, index}           

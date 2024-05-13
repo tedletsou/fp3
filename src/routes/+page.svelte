@@ -302,44 +302,8 @@
 
     //////////////////////////////////////////////////////////////
 
-    let sectionsData = [
-        {
-            title: 'Winter evictions are especially dangerous',
-            content: 'What challenges do evictees face? Let’s put ourselves in the shoes of an evictee. You are xx% more likely to be a person, xx% likely to have a family. No matter what time of year, evictions are cruel and traumatizing. Do you have a place to go? Many do not, and shelters fill up, especially during winter. As people seek wealth, shelters fill up.',
-            style: 'left'
-        },
-        {
-            title: 'Boston lacks cold-weather renter protections',
-            content: 'France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. While statewide or national legislation would be the best approach, Boston can work quickly to protect its population now. Boston’s local Boards of Health can declare states of emergency that prevent winter evictions.',
-            style: 'right'
-        },
-
-        {
-            title: 'Winter evictions are especially dangerous',
-            content: 'Subfreezing temperatures can occur more than 90 days a year in Boston. Yet, despite ranking as one of the coldest major cities in America, Boston lacks eviction protection during winter months. Families can be evicted in the dead of winter, with nowhere to go. Evictions are always cruel and traumatizing, but winter evictions are especially dangerous–The National Coalition for Homelessness estimates that 700 people experiencing homelessness die from hypothermia each year.',
-            style: 'left'
-        },
-        {
-            title: 'Boston lacks cold-weather renter protections',
-            content: 'France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. While statewide or national legislation would be the best approach, Boston can work quickly to protect its population now. Boston’s local Boards of Health can declare states of emergency that prevent winter evictions.',
-            style: 'right'
-        },
-
-        {
-            title: 'Winter evictions are especially dangerous',
-            content: 'Subfreezing temperatures can occur more than 90 days a year in Boston. Yet, despite ranking as one of the coldest major cities in America, Boston lacks eviction protection during winter months. Families can be evicted in the dead of winter, with nowhere to go. Evictions are always cruel and traumatizing, but winter evictions are especially dangerous–The National Coalition for Homelessness estimates that 700 people experiencing homelessness die from hypothermia each year.',
-            style: 'left'
-        },
-        {
-            title: 'Boston lacks cold-weather renter protections',
-            content: 'France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. While statewide or national legislation would be the best approach, Boston can work quickly to protect its population now. Boston’s local Boards of Health can declare states of emergency that prevent winter evictions.',
-            style: 'right'
-        },
-        // Add more sections as needed
-    ];
-
     let sections = []; // Array to hold references to each section
-    let visibleSections = new Array(sectionsData.length).fill(false); // Array to track visibility, initially false
+    let visibleSections = new Array(sections.length).fill(false); // Array to track visibility, initially false
 
 
 </script>
@@ -356,7 +320,7 @@
         /* background-color: rgb(207, 207, 207); */
         padding: 20px 40px;
         border-radius: 1em;
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica', sans-serif;
     }
 
     h3.range-title{
@@ -503,13 +467,13 @@
     /* CSS for Income Selector */
 
     .meta {
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica', sans-serif;
         text-align: center;
         margin-top: 150px;
     }
 
     .subtitle {
-        font-family: 'Helvetica Neue';
+        font-family: 'Helvetica', sans-serif;
         text-align: center;
         margin-top: 0px;
         font-size: 20px;
@@ -517,6 +481,7 @@
 
     .narrative1 {
         .section {
+
             width: 100%;
             padding: 30px;
             box-sizing: border-box;
@@ -552,7 +517,6 @@
 
         h3, p {
             margin: 0;
-            font-size: 30px; /* for h3 */
             font-size: 20px; /* for p */
             line-height: 1.5;
         }
@@ -586,10 +550,14 @@
 
     .bottom-text {
 
-        font-family: 'Helvetica Neue';
-        text-align: center;
-        margin: 150px;
-        font-size: 100;
+        h3 {
+
+            font-family: 'Helvetica', sans-serif;
+            text-align: center;
+            margin: 150px;
+            font-size: 30px;
+
+        }
 
     }
 
@@ -671,6 +639,48 @@
         border-radius: 5px;
     }
 
+    .footer{
+
+        font-family: 'Helvetica', sans-serif;
+        margin-left: 100px;
+        margin-right: 100px;
+        
+        .final-section {
+
+            width: 100%;
+            padding: 30px;
+            box-sizing: border-box;
+            background-color: white;
+            color: black;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 100px;
+            margin-bottom: 100px;
+            border-radius: 20px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: 100px;
+            background-color: #f2f2f2;
+            width: 100%;
+
+        }
+
+        h3, p {
+            margin: 0;
+            font-size: 20px; /* for p */
+            line-height: 1.5;
+        }
+
+        p, a{
+
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+        }
+
+    }
+
     /* let customColors = ['#ECE8A4', '#744665', '#1F5452', '#46A09E']; */
 </style>
 
@@ -686,82 +696,28 @@
 <div class="full_page">
 
     <div class="narrative1">
-        <!-- <div bind:this={leftSection} class="fade section section-left" class:fadeInLeft={leftVisible}>
-                <h3 style="color: #744665">Winter evictions are especially dangerous</h3>
-                <p>
-                    Subfreezing temperatures can occur more than 90 days a year in Boston. 
-                    Yet, despite ranking as one of the coldest major cities in America, Boston lacks eviction protection during winter months. 
-                    Families can be evicted in the dead of winter, with nowhere to go. 
-                    Evictions are always cruel and traumatizing, but winter evictions are especially dangerous–The National Coalition for Homelessness estimates that 700 people experiencing homelessness die from hypothermia each year. 
-                </p>
-            </div>
 
-            <div bind:this={rightSection} class="fade section section-right" class:fadeInRight={rightVisible}>
-                <h3 style="color: #744665">Boston lacks cold-weather renter protections </h3>
-                <p>
-                    France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. 
-                    The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. 
-                    While statewide or national legislation would be the best approach, Boston can work quickly to protect its population now. 
-                    Boston’s local Boards of Health can declare states of emergency that prevent winter evictions. 
-
-                </p>
-            </div>
-            
-            <div bind:this={leftSection} class="fade section section-left" class:fadeInLeft={leftVisible}>
-                <h3 style="color: #744665">Winter evictions are especially dangerous</h3>
-                <p>
-                    Subfreezing temperatures can occur more than 90 days a year in Boston. 
-                    Yet, despite ranking as one of the coldest major cities in America, Boston lacks eviction protection during winter months. 
-                    Families can be evicted in the dead of winter, with nowhere to go. 
-                    Evictions are always cruel and traumatizing, but winter evictions are especially dangerous–The National Coalition for Homelessness estimates that 700 people experiencing homelessness die from hypothermia each year. 
-                </p>
-            </div>
-
-            <div bind:this={rightSection} class="fade section section-right" class:fadeInRight={rightVisible}>
-                <h3 style="color: #744665">Boston lacks cold-weather renter protections </h3>
-                <p>
-                    France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. 
-                    The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. 
-                    While statewide or national legislation would be the best approach, Boston can work quickly to protect its population now. 
-                    Boston’s local Boards of Health can declare states of emergency that prevent winter evictions. 
-
-                </p>
-            </div> -->
-
-
-
-
-            <!-- {#each sectionsData as section, index}
-                <div bind:this={sections[index]}
-                    class="section {section.style === 'left' ? 'section-left' : 'section-right'}"
-                    class:fadeInLeft={section.style === 'left' && visibleSections[index]}
-                    class:fadeInRight={section.style === 'right' && visibleSections[index]}>
-                    <h3 style="color: #744665">{section.title}</h3>
-                    <p>{section.content}</p>
-                    <div class="chart-container">
-                        <EvictionTime data={evict_data} />
-                        <input type="range" bind:value={selectedYear} min="2000" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
-                    </div>
-                </div>
-            {/each} -->
             <div bind:this={sections[0]}
                 class="section section-left"
                 class:fadeInLeft={visibleSections[0]}>
                 <h3 style="color: #744665">Millions of families in the US are impacted by the eviction crisis in the US.</h3>
-                <p>According to the Eviction Lab, landlords filed more than 1.1 million eviction cases. 
+                <p>
+                    According to the Eviction Lab, landlords filed more than 1.1 million eviction cases. 
                     In fact, eviction has been increasing over the past years throughout the whole US and Massachusetts is no exception to that. 
                     Move the slider below to check how eviction has changed in MA from 2020 to 2023:</p>
                 <div class="chart-container">
                     <EvictionTime data={evict_data} />
                     <input type="range" bind:value={selectedYear} min="2000" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
                 </div>
+                <p>As we see, the number of eviction filings has doubled in 2023 in the Boston area compared to total evictions in 2020.</p>
             </div>
 
             <div bind:this={sections[1]}
                 class="section section-right"
                 class:fadeInRight={visibleSections[1]}>
                 <h3 style="color: #744665">What challenges do evictees face?</h3>
-                <p>Let’s put ourselves in the shoes of an evictee. You are xx% more likely to be a person, xx% likely to have a family.</p>
+                <p>Let’s put ourselves in the shoes of an evictee. 
+                    In Boston, you are more than three times as likely to be evicted in neighborhoods with majority people of color and around two times more likely in a neighborhood with a large fraction of families.</p>
                 <p>No matter what time of year, evictions are cruel and traumatizing. </p>
                 <p>Do you have a place to go?</p>
                 <p>Many do not, and shelters fill up, especially during winter. As people seek wealth, shelters fill up. </p>
@@ -770,10 +726,7 @@
                 </i></p>
                 <a class="pic-des" style="color: #8a8a8a" href="https://www.wgbh.org/news/local/2024-03-06/after-mass-and-cass-crackdown-homeless-community-cast-out-into-the-shadows-of-boston">Tori Bedford/GBH news 
                 </a>
-
-                
             </div>
-
 
              <div bind:this={sections[2]}
                 class="section section-left"
@@ -803,7 +756,7 @@
             <div bind:this={sections[4]}
                 class="section section-left"
                 class:fadeInLeft={visibleSections[4]}>
-                <h3 style="color: #744665">Who does this affect?</h3>
+                <h3 style="color: #744665">Where do evictees go?</h3>
                 <p>And so many people become homeless. <b>Several studies showed that 14% to 47% of homeless families have been evicted.</b> The number of people experiencing homelessness in Boston is increasing dramatically, rising 17.2% - from 4,439 people in 2022 to 5,202 people in 2023. </p>
                 <p><i style="color: #46A09E">“I had a spot where I could cut into a little cubby corner and stay inconspicuous. I didn't really have any problems about anybody bothering me there at night.” - Ishmael Rodriguez </i></p>
                 <p><i style="color: #8a8a8a">Ishmael is a 57-year old man who slept in a tent for almost a year near the intersection of Massachusetts Ave and Melnea Cass Boulevard, Boston’s longtime epicenter of homelessness. He’s been homeless since losing his Dorchester apartment in 2021. </i></p>   
@@ -815,7 +768,7 @@
                 <h3 style="color: #744665">What challenges do evictees face?</h3>
                 <p>People facing unsheltered homelessness are at heightened risk during winter due to exposure to the elements outdoors. Unhoused Bostonians who sleep in the street are 10 times more likely to die than those with shelter. 
                 </p>
-                <p>Cold temperatures can lead to hypothermia, a condition where the body loses heat faster than it can generate, and frostbite. Those experiencing homelessness often lack essential resources such as insulated winter clothing and access to warm shelter, which is particularly concerning during nighttime when temperatures plummet below freezing.
+                <p>Subfreezing temperatures can occur more than 90 days a year in Boston. Cold temperatures can lead to hypothermia, a condition where the body loses heat faster than it can generate, and frostbite. The National Coalition for Homelessness estimates that 700 people experiencing homelessness die from hypothermia each year. Those experiencing homelessness often lack essential resources such as insulated winter clothing and access to warm shelter, which is particularly concerning during nighttime when temperatures plummet below freezing.
                 </p>
              </div>
 
@@ -824,8 +777,13 @@
                 class:fadeInLeft={visibleSections[6]}>
                 <h3 style="color: #744665">But things can change. A winter moratorium on eviction can protect people. 
                 </h3>
-                <p><i style="color: #46A09E"> “I was a landlord for many years. Even though I followed state laws regarding this eviction, I came to realize these laws are unjust and need to be changed.” -Gerry Willis </i></p>
-                <p><i style="color: #8a8a8a"> Garry is a former landlord who owned multiple properties. He evicted a male tenant who had received multiple noise complaints. The evicted tenant died in a heatless garage.     </i></p>   
+                <p><i style="color: #46A09E"> “I really don’t want to see another winter here in Massachusetts. This is a bad one.” - Martin </i></p>
+                <p><i style="color: #8a8a8a"> Martin, 48 on the streets of Cambridge, has experienced several snowstorms, resulting in numerous bouts of pneumonia. </i></p>   
+            
+                <p><i style="color: #46A09E"> “While working at BHCHP two summers ago, I had heard of and met people who received amputations due to frostbite from living outdoors during Boston’s frigid winter” - Lisa Gong </i></p>
+                <p><i style="color: #8a8a8a">  Lisa Gong, who formerly worked at Boston Health Care for the Homeless Program (BHCHP) and attended Boston’s first Winter Walk, an annual walk around Copley Square in February, the coldest month of the year, to raise awareness and funds to end homelessness.
+                </i></p>   
+            
             </div>
             
             <div bind:this={sections[7]}
@@ -852,9 +810,6 @@
                 </b></h3> 
             </div>
     </div>
-
-    
-
 
     <div class="selection_column section-left" bind:this={sections[9]} 
         class:fadeInLeft={visibleSections[9]}>
@@ -917,12 +872,12 @@
                 on:mouseleave={evt => textInteraction(2, evt)}>
             </dl>
         
-            <dl class="corporate_selection">
+            <!-- <dl class="corporate_selection">
                 <input type="button" value="Corporate" 
                 on:click={ function() {metric_to_graph= "Corporate"} }
                 on:mouseenter= {evt=> textInteraction(3, evt)}
                 on:mouseleave={evt => textInteraction(3, evt)}>
-            </dl>
+            </dl> -->
         </div>
 
         <div class="simulate_winter_ban">
@@ -964,36 +919,6 @@
 
     </div>
 
-    <!-- <div class="metric_selection2">
-        <dl class="fam_select2">
-            <input type="button" value="Family" 
-            on:click={ function() {metric_to_graph= "Family"} }
-            on:mouseenter= {evt=> textInteraction(1, evt)}
-            on:mouseleave={evt => textInteraction(1, evt)}>
-        </dl>
-        <dl class="race_selection2">
-            <input type="button" value="Race" 
-            on:click={ function() {metric_to_graph= "Race"} }
-            on:mouseenter= {evt=> textInteraction(0, evt)}
-            on:mouseleave={evt => textInteraction(0, evt)}>
-
-        </dl>
-        <dl class="elderly_selection2">
-            <input type="button" value="Elder" 
-            on:click={ function() {metric_to_graph= "Elderly"} }
-            on:mouseenter= {evt=> textInteraction(2, evt)}
-            on:mouseleave={evt => textInteraction(2, evt)}>
-        </dl>
-    
-        <dl class="corporate_selection2">
-            <input type="button" value="Corporate" 
-            on:click={ function() {metric_to_graph= "Corporate"} }
-            on:mouseenter= {evt=> textInteraction(3, evt)}
-            on:mouseleave={evt => textInteraction(3, evt)}>
-        </dl>
-    </div> -->
-<!-- </div> -->
-
     <div class="eviction_animation">
         {#if metric_to_graph.includes("Family")}
             <DotAnimation data={temp_data} text={"Thousands of people are evicted from their homes each year in Boston in subfreezing weather, disproportionately affecting already disadvantaged groups.  A winter eviction moratorium stops people from being evicted into freezing temperatures outside, especially benefitting already disadvantaged groups. "}
@@ -1019,17 +944,15 @@
 
 </div>
 
+<div class="footer">
+    <div class="final-section">
+        <h3 style="color: #744665">Boston lacks cold-weather renter protections
+        </h3>
+        <p>France ensures its families aren’t put out into the cold, by providing a “winter break” measure banning evictions between November and March. The United States lacks such a blanket protection, leaving the responsibility to a handful of municipalities and states like Chicago and Washington D.C. to provide some, inconsistent level of protection. While statewide or national legislation would be the best approach, Boston can <b>work quickly to protect its population now.</b>  Boston’s local Boards of Health can declare states of emergency that prevent winter evictions. 
+        </p>
+    </div>
+</div>
 
-<!-- TEXT for each Bin and Category: -->
-    <!-- Mixed: ["Families (especially with children) increase the risk of eviction. "]
-    Non-Fam: ["Eviction rates are lower in non-family households. "]
-    FamilyType: ["Families (especially with children) increase the risk of eviction. "]
-    White: ["Eviction rates are lowest in regions with a majority white population.  "]
-    Black: ["Eviction rates are highest in regions with a majority black population, more than twice as high as majority white regions. "]
-    Latino: ["Eviction rates are higher in regions with a majority latino population."]
-    Other: ["Eviction rates are higher in neighborhoods that are not majority white."]
-    No Elderly: ["Homogenous regions without any elderly population experience far lower eviction "]
-    Some Elderly: ["Regions with some elderly population are much more at risk of evictions."]
-    Corporate Ownership Low: ["Low Corporate Ownership"]
-    Corporate Ownership Medium: ["Medium Corporate Ownership"]
-    Corporate Ownership High: ["High Corporate Ownership"] -->
+
+
+

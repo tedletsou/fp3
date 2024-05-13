@@ -13,7 +13,8 @@
     let temp_bins = ["Summer", "Spring", "Fall", "Winter"];
     let margin = {top: 10, right: 10, bottom: 30, left:40};
     let height= 400;
-    let width = 600;
+    let width = 900;
+    let progress_bar_width = 900;
     let startX = 5;
     let startY = height/4 ;
     let hoveredIndex = -1;
@@ -31,11 +32,16 @@
         right: width - margin.right
     };
     let yScale = d3.scaleBand();
-    let summer_dots_count = [];
-    let spring_dots_count = [];
-    let fall_dots_count = [];
-    let winter_dots_count = [];
+    // let summer_dots_count = [];
+    // let spring_dots_count = [];
+    // let fall_dots_count = [];
+    // let winter_dots_count = [];
     let categoryScale = d3.scaleBand();
+    // let sum = 0;
+
+
+    // calculate the total number of winter, fall, spring, and summer evictions
+    // and then given the index
 
     // Define your custom colors
     // '#46A09E', yellow 
@@ -94,46 +100,29 @@
             // gets the corresponding index for the category
             let category_type = categoryType(data, metric);           
             let category_index = categoryScale( category_type);
-            // console.log("category index: ", category_index);
-            // console.log("summer dots count: ", summer_dots_count);
-            // console.log("spring dots count: ", spring_dots_count);
-            // console.log("fall dots count: ", fall_dots_count);
-            // console.log("winter dots count: ", winter_dots_count);
 
             // checks if eviction was during summer
             if ( convertMonthToTemp(data.month) === "Summer")
             {
-                // console.log("I am a summer eviction!!!");
                 summer_dots_count[category_index] +=1;
-                // console.log(summer_dots);
-                // console.log();
             }
 
             // checks if eviction was during spring
             else if (convertMonthToTemp(data.month) === "Spring")
             {
-                // console.log("I am a spring eviction!!!");
                 spring_dots_count[category_index] +=1;
-                // console.log(spring_dots);
-                // console.log();
             }
 
             // checks if eviction was during fall
             else if (convertMonthToTemp(data.month) === "Fall")
             {
-                // console.log("I am a fall eviction!!!");
                 fall_dots_count[category_index] +=1;
-                // console.log(fall_dots);
-                // console.log();
             }
 
             // checks if eviction was during winter
             if (convertMonthToTemp(data.month) === "Winter")
             {
-                // console.log("I am a winter eviction!!!");
                 winter_dots_count[category_index] +=1;
-                // console.log(winter_dots);
-                // console.log();
             }
         }
 
@@ -206,10 +195,30 @@
             return "Summer";
         }
     }
-    function updateDotCount(dot, index)
+
+    function computeSum(season_array)
     {
+        let sum = 0;
+
+        for (let element of season_array)
+        {
+            sum+= element;
+        }
+
+        return sum;
+    }
+
+    // calculates the proportions from the previous categories for the dot animation
+    function previousHeight(index, season_array)
+    {
+        let total_proportions = 0;
         
-        num_dots +=1;
+        for (let i = index; i > 0; i--)
+        {
+            total_proportions += (season_array[i-1] / computeSum(season_array));
+        }
+
+        return total_proportions;
     }
 
 </script>
@@ -218,10 +227,7 @@
 @keyframes moveCircles{
     
     100%{
-        /* fill: var(--seasonColor); */
         opacity: 100%;
-        /* transform: scale(1.5); */
-        /* opacity: 0%; */
     }
     to{
         /* final x position of cirlce */
@@ -236,8 +242,8 @@
 .moving_dots{
     opacity: 75%;
     /* animation: moveCircles 20s  ease-in-out; */
-    animation: moveCircles 5s ease-in-out; 
-    animation-delay: calc(var(--index) * 200ms);
+    animation: moveCircles 3s ease-in-out; 
+    animation-delay: calc(var(--index) * 50ms);
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
@@ -302,6 +308,7 @@
         display:grid;
         grid-template-rows: auto auto auto auto;
         margin-right: 20px;
+        margin-left: 300px;
 
             div{
                 grid-row:1;
@@ -318,9 +325,42 @@
     }
 }
 
+rect.Winter
+{
+    height: calc(var(--winter_height) * 50px);
+    /* transition: opacity 5s ease-in-out 1s; */
+
+    animation: rectangleTransitions 6s ease-in;
+    /* animation-delay: 1s; */
+}   
+
+rect.Summer
+{
+    height: calc(var(--summer_height) *50px);
+    /* transition: opacity 5s ease-in-out 1s; */
+    animation: rectangleTransitions 6s ease-in;
+    /* animation-delay: 1s; */
+}
+
+rect.Spring
+{
+    height: calc(var(--spring_height) * 50px);
+    /* transition: opacity 5s ease-in-out 1s; */
+    animation: rectangleTransitions 6s ease-in;
+    /* animation-delay: 1s; */
+}
+
+rect.Fall
+{
+    height: calc(var(--fall_height) * 50px);
+    /* transition: opacity 5s ease-in-out 1s; */
+
+    animation: rectangleTransitions 6s ease-in;
+    /* animation-delay: 1s; */
+}
+
 svg{
     margin-bottom: 20px;
-    
 }
 
 .percent_labels{
@@ -336,7 +376,7 @@ svg{
         {/each}
     </section>
 
-    <dl id="eviction-tooltip" class="info tooltip" 
+    <!-- <dl id="eviction-tooltip" class="info tooltip" 
         hidden={hoveredIndex === -1}
         bind:this={evictionTooltip}
         style="top:{tooltipPosition.y}px; left:{tooltipPosition.x}px">
@@ -349,7 +389,7 @@ svg{
         <dt>Eviction Year</dt>
         <dd> { hoveredEviction.year } </dd>
        
-    </dl>
+    </dl> -->
 
     <div class="entire_visualization">
         <section class="visual">
@@ -369,7 +409,7 @@ svg{
                         fill={dataColoring(d, metric, index)}
                         stroke="white"
                         style="
-                        --xposition:{500-Math.random() * 50};
+                        --xposition:{width - 100 -Math.random() * 50};
                         --index:{index};
                         --yposition:{ yScale( convertMonthToTemp(d.month) ) + yScale.bandwidth() / 2 + Math.random()*40};
                         --seasonColor: { monthColor(convertMonthToTemp(d.month)) };"
@@ -389,40 +429,98 @@ svg{
                     /> -->
                 {/each}
                 
-                {#each temp_bins as bin}
-                    <rect
-                    x={ 600 }
-                    y={ yScale(bin) } 
-                    width={boxWidth}
-                    height={boxHeight}
-                    stroke="black"
-                    fill={monthColor(bin)}
-                    />
+                {#each temp_bins as season}
+                    {#each bins as category, i}
+                        {#if season === "Winter"}
+                            <rect
+                                class="{season}"
+                                id="{category}"
+                                x= { progress_bar_width }
+                                y={yScale(season) + previousHeight(i, winter_dots_count)*50}
+                                width={boxWidth}
+                                style="
+                                --winter_height:{ winter_dots_count[i] / computeSum(winter_dots_count) };
+                                --summer_height: { summer_dots_count[i] / computeSum(summer_dots_count) };
+                                --spring_height: { spring_dots_count[i] / computeSum(spring_dots_count) };
+                                --fall_height: { fall_dots_count[i] / computeSum(fall_dots_count) };
+                                "
+                                fill={fillColor(category)}
+                            />
+                        {/if}
+                        {#if season === "Fall"}
+                            <rect
+                                class="{season}"
+                                id="{category}"
+                                x={ progress_bar_width }
+                                y={yScale(season) + previousHeight(i, fall_dots_count)*50}
+                                width={boxWidth}
+                                style="
+                                --winter_height:{ winter_dots_count[i] / computeSum(winter_dots_count) };
+                                --summer_height: { summer_dots_count[i] / computeSum(summer_dots_count) };
+                                --spring_height: { spring_dots_count[i] / computeSum(spring_dots_count) };
+                                --fall_height: { fall_dots_count[i] / computeSum(fall_dots_count) };
+                                "
+                                fill={fillColor(category)}
+                            />
+                        {/if}
+                        {#if season === "Spring"}
+                            <rect
+                                class="{season}"
+                                id="{category}"
+                                x={ progress_bar_width }
+                                y={yScale(season) + previousHeight(i, spring_dots_count)*50}
+                                width={boxWidth}
+                                style="
+                                --winter_height:{ winter_dots_count[i] / computeSum(winter_dots_count) };
+                                --summer_height: { summer_dots_count[i] / computeSum(summer_dots_count) };
+                                --spring_height: { spring_dots_count[i] / computeSum(spring_dots_count) };
+                                --fall_height: { fall_dots_count[i] / computeSum(fall_dots_count) };
+                                "
+                                fill={fillColor(category)}
+                            />
+                        {/if}
+
+                        {#if season === "Summer"}
+                        <rect
+                            class="{season}"
+                            id="{category}"
+                            x={ progress_bar_width }
+                            y={yScale(season) + previousHeight(i, summer_dots_count)*50}
+                            width={boxWidth}
+                            style="
+                            --winter_height:{ winter_dots_count[i] / computeSum(winter_dots_count) };
+                            --summer_height: { summer_dots_count[i] / computeSum(summer_dots_count) };
+                            --spring_height: { spring_dots_count[i] / computeSum(spring_dots_count) };
+                            --fall_height: { fall_dots_count[i] / computeSum(fall_dots_count) };
+                            "
+                            fill={fillColor(category)}
+                        />
+                    {/if}
+            
+                        
+                    {/each}
                 {/each}
             </svg>
         </section>
         <section class="temp_legend">
+            
+            <!-- COULD REMOVE THIS  -->
             {#each bins as bin, i}
-                <!-- <dt>{bin}</dt> -->
                 <div 
                     class="bin_circles"
                     style="background-color:{fillColor(bin)}"
                 />
             {/each}
+
+            <!-- END OF SECTION TO POTENTIALLY REMOVE -->
     
             {#each temp_bins.reverse() as b, index}
-                {console.log("row: ", index)}
 
                 {#each bins as bin, i}
     
-                    <!-- {console.log("season", bin)}
-                    {console.log("column: ", i)} -->
-
                     {#if b === "Summer"}
-                    
                         <dd class="percent_labels" style="--season_color: {fillColor(bin)};">{summer_dots_count[i]}</dd>
                     {/if}
-
                     {#if b === "Spring"}
                         <dd class="percent_labels" style="--season_color: {fillColor(bin)};">{spring_dots_count[i]}</dd>
                     {/if}

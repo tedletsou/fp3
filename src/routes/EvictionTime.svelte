@@ -51,7 +51,7 @@
 
 <style>
     svg {
-        font-family: 'Helvetica Neue', sans-serif;
+        font-family: 'Helvetica', sans-serif;
     }
     .tick text {
         fill: #000;
