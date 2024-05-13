@@ -40,7 +40,7 @@
               .select(".x-label")
               .attr("transform", `translate(${width / 2}, ${height - 20})`)
               .style("text-anchor", "middle")
-              .text("Year");
+              .text("Date");
 
             // Add Y-axis label
             d3.select(svg)

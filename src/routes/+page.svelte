@@ -608,6 +608,7 @@
         border-radius: 5px; /* Optional: rounds the corners of the slider track */
         position: relative;
         margin: 10px 0; /* Adds some space around the slider */
+        margin-left: 400px;
     }
 
     /* Styles for the thumb (the draggable part of the slider) */
@@ -704,7 +705,7 @@
     Mapping the Movement for Eviction Reform and Advocacy
 </h3>
 <h4 class="subtitle">
-    An informative exposé by <font color="#46A09E">Olivia Dias</font>, <font color="#46A09E">Sarah Gurev</font>, <font color="#46A09E">Ted Letsou</font>, and <font color="#46A09E">Protyasha Nishat</font>, MIT 6.C35
+    An informative exposé by <font color="#46A09E">Olivia Dias</font>, <font color="#46A09E">Sarah Gurev</font>, <font color="#46A09E">Ted Letsou</font>, and <font color="#46A09E">Nishat Protyasha</font>, MIT 6.C35
 </h4>
 
 
@@ -721,8 +722,8 @@
                     In fact, eviction has been increasing over the past years throughout the whole US and Massachusetts is no exception to that. 
                     Move the slider below to check how eviction has changed in MA from 2020 to 2023:</p>
                 <div class="chart-container">
-                    <EvictionTime data={evict_data} />
-                    <input type="range" bind:value={selectedYear} min="2000" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
+                    <EvictionTime data={evict_data} raw_data={evict_dataRAW}/>
+                    <input type="range" bind:value={selectedYear} min="2020" max="2023" class="year-slider" style="--range: {rangePercentage}%;">
                 </div>
                 <p>As we see, the number of eviction filings has doubled in 2023 in the Boston area compared to total evictions in 2020.</p>
             </div>
